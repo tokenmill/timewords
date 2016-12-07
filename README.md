@@ -14,8 +14,10 @@ Add a dependency to your `project.clj`:
 ```
 
 ```clojure
-(require [timewords.core :refer [parse]])
+(require '[timewords.core :refer [parse]])
+=> nil
 (parse "2001-01-01")
+=> #inst"2001-01-01T00:00:00.000-00:00"
 ```
 
 ## Java
