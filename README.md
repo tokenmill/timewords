@@ -22,6 +22,18 @@ Add a dependency to your `project.clj`:
 
 ## Java
 
+As of now the JAR is stored in Clojars, therefore maven is not going to find the artifact.
+You should add the repository information to your `pom.xml`:
+```xml
+<repositories>
+    <repository>
+        <id>clojars.org</id>
+        <url>http://clojars.org/repo</url>
+    </repository>
+</repositories>
+
+```
+
 Add a maven dependency to your `pom.xml`:
 
 ```xml
