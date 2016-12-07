@@ -12,3 +12,4 @@ pom.xml.asc
 .nrepl-port
 .idea/
 metadata-detection.iml
+timewords.iml
