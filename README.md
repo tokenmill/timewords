@@ -1,7 +1,8 @@
 # timewords
-Library to parse date string to date.
 
-TODO: relative dates e.g. "yesterday", are not handled.
+[![Clojars Project](https://img.shields.io/clojars/v/lt.tokenmill/timewords.svg)](https://clojars.org/lt.tokenmill/timewords)
+
+Library to parse date string to date.
 
 # Usage
  
@@ -10,7 +11,7 @@ TODO: relative dates e.g. "yesterday", are not handled.
 Add a dependency to your `project.clj`:
 
 ```clojure
-[lt.tokenmill/timewords "0.1.0"]
+[lt.tokenmill/timewords "0.1.1"]
 ```
 
 ```clojure
@@ -54,3 +55,6 @@ public static void main(String[] args) {
 ```
 Note that `timewords` depends on `org.clojure/clojure` which must be provided.
 
+# TODO
+
+TODO: relative dates e.g. "yesterday", are not handled.

@@ -86,6 +86,7 @@
 
     (is (> 1000 (- (tc/to-long (joda/now)) (tc/to-long (parse "now")))))
     (is (= nil (parse "makes no sense")))
+    (is (= nil (parse "16 seconds ago")))
     (is (= nil (parse "32 mins ago")))
     (is (= nil (parse "32 minutes ago")))
     (is (= nil (parse "2 days ago")))
