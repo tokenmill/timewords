@@ -1,6 +1,7 @@
 (ns timewords.core-test
   (:require [clojure.test :refer :all]
-            [clj-time.core :refer [date-time]]
+            [clj-time.core :as joda :refer [date-time]]
+            [clj-time.coerce :as tc]
             [timewords.core :refer :all])
   (:import (org.joda.time DateTime)))
 
@@ -83,6 +84,7 @@
     (is (= (date 2016 2 24 0 1) (parse "Wed Feb 24 2016 00:01 UTC+1201")))
     (is (= (date 2000 9 14 13 19) (parse "14/09/2000, 13:19")))
 
+    (is (> 1000 (- (tc/to-long (joda/now)) (tc/to-long (parse "now")))))
     (is (= nil (parse "makes no sense")))
     (is (= nil (parse "32 mins ago")))
     (is (= nil (parse "32 minutes ago")))

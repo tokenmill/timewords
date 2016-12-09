@@ -71,11 +71,15 @@
 
 (defn parse-relative-date [s]
   ;; TODO: implement parsing of such timeword as "32 mins ago".
-  nil)
+  (cond
+    (= "now" s) (let [dt (joda/now)]
+                  (map str [(joda/year dt) (joda/month dt) (joda/day dt)
+                            (joda/hour dt) (joda/minute dt) (joda/second dt)]))
+    :else nil))
 
 (defn is-relative-date? [s]
   ;; Here list of words for relative time is not extensive
-  (if (or (not (re-find #"\d" s)) (re-find #"ago|yesterday|tomorrow|last|previous|next" s))
+  (if (or (not (re-find #"\d" s)) (re-find #"ago|yesterday|tomorrow|last|previous|next|now" s))
     true
     false))
 
