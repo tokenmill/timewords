@@ -69,12 +69,45 @@
 (defn minute [fuzzy-date] (second (re-find #"\b\d{1,2}[:|\.](\d{2})[\\b]?" fuzzy-date)))
 (defn zecond [fuzzy-date] (second (re-find #"\b\d{2}:\d{2}:(\d{2})\b" fuzzy-date)))
 
+(defn date-to-str-seq [joda-datetime]
+  (when (not (nil? joda-datetime))
+    (map str [(joda/year joda-datetime) (joda/month joda-datetime) (joda/day joda-datetime)
+              (joda/hour joda-datetime) (joda/minute joda-datetime) (joda/second joda-datetime)])))
+
+(defn parse-some-time-ago
+  "Handle strings like '32 mins ago'."
+  [s]
+  (let [now (joda/now)
+        cleaned-timeword (-> s (s/replace "ago" "") (s/trim))]
+    (if (re-find #"\d+" s)
+      (let [amount (Integer/parseInt (re-find #"\d+" s))]
+        ; normal cases
+        (cond
+          (re-find #"\d+s$|sec|secs|second|seconds" cleaned-timeword) (joda/minus now (joda/seconds amount))
+          (re-find #"\d+m$|min|mins|minute|minutes" cleaned-timeword) (joda/minus now (joda/minutes amount))
+          (re-find #"\d+h$|hour|hours" cleaned-timeword) (joda/minus now (joda/hours amount))
+          (re-find #"\d+d$|day|days" cleaned-timeword) (joda/minus now (joda/days amount))
+          (re-find #"month|months" cleaned-timeword) (joda/minus now (joda/months amount))
+          (re-find #"year|years" cleaned-timeword) (joda/minus now (joda/years amount))
+          :else nil))
+      (cond
+        ; special cases
+        (= "a sec" cleaned-timeword) (joda/minus now (joda/seconds 1))
+        (= "a second" cleaned-timeword) (joda/minus now (joda/seconds 1))
+        (= "a min" cleaned-timeword) (joda/minus now (joda/minutes 1))
+        (= "a minute" cleaned-timeword) (joda/minus now (joda/minutes 1))
+        (= "a hour" cleaned-timeword) (joda/minus now (joda/hours 1))
+        (= "an hour" cleaned-timeword) (joda/minus now (joda/hours 1))
+        (= "a day" cleaned-timeword) (joda/minus now (joda/days 1))
+        (= "a month" cleaned-timeword) (joda/minus now (joda/months 1))
+        (= "a year" cleaned-timeword) (joda/minus now (joda/years 1))
+        :else nil))))
+
 (defn parse-relative-date [s]
   ;; TODO: implement parsing of such timeword as "32 mins ago".
   (cond
-    (= "now" s) (let [dt (joda/now)]
-                  (map str [(joda/year dt) (joda/month dt) (joda/day dt)
-                            (joda/hour dt) (joda/minute dt) (joda/second dt)]))
+    (= "now" s) (-> (joda/now) (date-to-str-seq))
+    (re-find #"ago" s) (-> s (parse-some-time-ago) (date-to-str-seq))
     :else nil))
 
 (defn is-relative-date? [s]

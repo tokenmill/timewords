@@ -41,8 +41,4 @@
     (is (= ["2015" "10" "19" "11" "51"] (parse-date "Oct. 19, 2015 11:51 AM ET"))))
 
   (testing "bbc.com"
-    (is (= ["2015" "10" "20"] (parse-date "20 October 2015"))))
-
-  (testing "geektime.com"
-    ;; TODO: implement the correct behaviour
-    (is (= nil (parse-date "32 mins ago")))))
+    (is (= ["2015" "10" "20"] (parse-date "20 October 2015")))))
