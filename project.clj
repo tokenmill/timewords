@@ -1,7 +1,7 @@
-(defproject lt.tokenmill/timewords "0.1.2"
+(defproject lt.tokenmill/timewords "0.1.3"
   :description "Library to parse time strings."
 
-  :dependencies [[clj-time "0.12.2" :exclusions [org.clojure/clojure]]]
+  :dependencies [[clj-time "0.12.2"]]
 
   :aot [timewords.core]
 

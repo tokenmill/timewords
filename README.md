@@ -11,7 +11,7 @@ Library to parse date string to date.
 Add a dependency to your `project.clj`:
 
 ```clojure
-[lt.tokenmill/timewords "0.1.1"]
+[lt.tokenmill/timewords "0.1.3"]
 ```
 
 ```clojure
@@ -41,7 +41,7 @@ Add a maven dependency to your `pom.xml`:
 <dependency>
     <groupId>lt.tokenmill</groupId>
     <artifactId>timewords</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.3</version>
 </dependency>
 ```
 

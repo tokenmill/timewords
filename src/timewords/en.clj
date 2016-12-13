@@ -1,6 +1,7 @@
 (ns timewords.en
   (:require [clojure.string :as s]
-            [clj-time.core :as joda]))
+            [clj-time.core :as joda]
+            [clj-time.coerce :as tc]))
 
 (def months
   {#"(january)|(jan.)"    "1"
@@ -71,8 +72,13 @@
 
 (defn date-to-str-seq [joda-datetime]
   (when (not (nil? joda-datetime))
-    (map str [(joda/year joda-datetime) (joda/month joda-datetime) (joda/day joda-datetime)
-              (joda/hour joda-datetime) (joda/minute joda-datetime) (joda/second joda-datetime)])))
+    (map str [(joda/year joda-datetime)
+              (joda/month joda-datetime)
+              (joda/day joda-datetime)
+              (joda/hour joda-datetime)
+              (joda/minute joda-datetime)
+              (-> joda-datetime (tc/to-long) (mod 60000) (quot 1000)) ;to avoid using joda/seconds
+              ])))
 
 (defn parse-some-time-ago
   "Handle strings like '32 mins ago'."
@@ -83,7 +89,7 @@
       (let [amount (Integer/parseInt (re-find #"\d+" s))]
         ; normal cases
         (cond
-          (re-find #"\d+s$|sec|secs|second|seconds" cleaned-timeword) (joda/minus now (joda/seconds amount))
+          (re-find #"\d+s$|sec|secs|second|seconds" cleaned-timeword) (joda/minus now (joda/millis (* amount 1000)))
           (re-find #"\d+m$|min|mins|minute|minutes" cleaned-timeword) (joda/minus now (joda/minutes amount))
           (re-find #"\d+h$|hour|hours" cleaned-timeword) (joda/minus now (joda/hours amount))
           (re-find #"\d+d$|day|days" cleaned-timeword) (joda/minus now (joda/days amount))
@@ -92,8 +98,8 @@
           :else nil))
       (cond
         ; special cases
-        (= "a sec" cleaned-timeword) (joda/minus now (joda/seconds 1))
-        (= "a second" cleaned-timeword) (joda/minus now (joda/seconds 1))
+        (= "a sec" cleaned-timeword) (joda/minus now (joda/millis 1000))
+        (= "a second" cleaned-timeword) (joda/minus now (joda/millis 1000))
         (= "a min" cleaned-timeword) (joda/minus now (joda/minutes 1))
         (= "a minute" cleaned-timeword) (joda/minus now (joda/minutes 1))
         (= "a hour" cleaned-timeword) (joda/minus now (joda/hours 1))
