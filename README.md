@@ -2,7 +2,7 @@
 
 [![Clojars Project](https://img.shields.io/clojars/v/lt.tokenmill/timewords.svg)](https://clojars.org/lt.tokenmill/timewords)
 
-Library to parse date string to date.
+Library to parse date string to java.util.Date object.
 
 # Usage
  
@@ -11,7 +11,7 @@ Library to parse date string to date.
 Add a dependency to your `project.clj`:
 
 ```clojure
-[lt.tokenmill/timewords "0.1.4"]
+[lt.tokenmill/timewords "0.1.5"]
 ```
 
 ```clojure
@@ -45,7 +45,7 @@ Add a maven dependency to your `pom.xml`:
 <dependency>
     <groupId>lt.tokenmill</groupId>
     <artifactId>timewords</artifactId>
-    <version>0.1.4</version>
+    <version>0.1.5</version>
 </dependency>
 ```
 
@@ -61,4 +61,4 @@ Note that `timewords` depends on `org.clojure/clojure` which must be provided.
 
 # TODO
 
-TODO: relative dates e.g. "yesterday", are not handled.
+TODO: relative dates e.g. "last Friday", are not handled.
