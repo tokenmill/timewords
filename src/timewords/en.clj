@@ -116,6 +116,7 @@
   (cond
     (= "now" s) (-> (joda/now) (date-to-str-seq))
     (= "yesterday" s) (-> (joda/now) (joda/minus (joda/days 1)) (date-to-str-seq))
+    (= "tomorrow" s) (-> (joda/now) (joda/plus (joda/days 1)) (date-to-str-seq))
     (re-find #"ago" s) (-> s (parse-some-time-ago) (date-to-str-seq))
     :else nil))
 

@@ -85,6 +85,7 @@
     (is (= (date 2016 2 24 0 1) (parse "Wed Feb 24 2016 00:01 UTC+1201")))
 
     (let [delta 1000]
+      ; past
       (is (> delta (- (tc/to-long (joda/now)) (tc/to-long (parse "now")))))
       (is (> delta (- (tc/to-long (joda/minus (joda/now) (joda/seconds 1))) (tc/to-long (parse "a sec ago")))))
       (is (> delta (- (tc/to-long (joda/minus (joda/now) (joda/seconds 1))) (tc/to-long (parse "1 sec ago")))))
@@ -117,9 +118,10 @@
       (is (> delta (- (tc/to-long (joda/minus (joda/now) (joda/months 2))) (tc/to-long (parse "2 months ago")))))
       (is (> delta (- (tc/to-long (joda/minus (joda/now) (joda/years 1))) (tc/to-long (parse "a year ago")))))
       (is (> delta (- (tc/to-long (joda/minus (joda/now) (joda/years 1))) (tc/to-long (parse "1 year ago")))))
-      (is (> delta (- (tc/to-long (joda/minus (joda/now) (joda/years 2))) (tc/to-long (parse "2 years ago"))))))
+      (is (> delta (- (tc/to-long (joda/minus (joda/now) (joda/years 2))) (tc/to-long (parse "2 years ago")))))
+      ; future
+      (is (> delta (- (tc/to-long (joda/plus (joda/now) (joda/days 1))) (tc/to-long (parse "tomorrow"))))))
     (is (= nil (parse "makes no sense")))
-    (is (= nil (parse "tomorrow")))
     (is (= nil (parse "last year")))
     (is (= nil (parse "previous year")))
     (is (= nil (parse "next year")))))
