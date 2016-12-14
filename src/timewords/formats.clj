@@ -74,6 +74,7 @@
    "MM/dd/yyyy hh:mm:ss a z"
    "MM/dd/yyyy hh:mm a z"
    "MM/dd/yyyy HH:mm"
+   ["dd/MM/yyyy, hh:mm" true]
    "dd/MM/yy HH:mm"
    "MM/dd/yyyy"
    "dd/MM/yyyy"

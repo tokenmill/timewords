@@ -27,12 +27,12 @@
        (formats/parse)
        (map from-date)
        ; for cases where multiple patterns match
-       (filter #(< 2000 (t/year %)))
+       (filter #(< 1970 (t/year %)))
        (first)))
 
 (defn to-date [^String date]
-  (when-not (empty? date))
-      (-> date
-          clean-date-string
-          normalize-date-parts
-          multi-format-parse))
+  (when-not (empty? date)
+    (-> date
+        clean-date-string
+        normalize-date-parts
+        multi-format-parse)))
