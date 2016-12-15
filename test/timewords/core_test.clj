@@ -24,6 +24,7 @@
     (is (= (date 2014 12 22 20 19 48) (parse "2014-12-22T22:19:48+02:00")))
     (is (= (date 2009 1 8) (parse "2009/01/08")))
     (is (= (date 2013 3 12) (parse "2013-03-12")))
+    (is (= (date 2010 8) (parse "August 2010")))
     (is (= (date 2013) (parse "2013"))))
 
   (testing "EN date parsing"
