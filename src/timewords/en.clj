@@ -111,6 +111,37 @@
         (= "a year" cleaned-timeword) (joda/minus now (joda/years 1))
         :else nil))))
 
+(defn parse-some-time-from-now
+  "Handle strings like '32 mins from now'."
+  [s]
+  (let [now (joda/now)
+        cleaned-timeword (-> s (s/replace "from now" "") (s/trim))]
+    (if (re-find #"\d+" s)
+      (let [amount (Integer/parseInt (re-find #"\d+" s))]
+        ; normal cases
+        (cond
+          (re-find #"\d+s$|sec|secs|second|seconds" cleaned-timeword) (joda/plus now (joda/millis (* amount 1000)))
+          (re-find #"\d+m$|min|mins|minute|minutes" cleaned-timeword) (joda/plus now (joda/minutes amount))
+          (re-find #"\d+h$|hour|hours" cleaned-timeword) (joda/plus now (joda/hours amount))
+          (re-find #"\d+d$|day|days" cleaned-timeword) (joda/plus now (joda/days amount))
+          (re-find #"\d+w$|week|weeks" cleaned-timeword) (joda/plus now (joda/days (* 7 amount)))
+          (re-find #"month|months" cleaned-timeword) (joda/plus now (joda/months amount))
+          (re-find #"year|years" cleaned-timeword) (joda/plus now (joda/years amount))
+          :else nil))
+      (cond
+        ; special cases
+        (= "a sec" cleaned-timeword) (joda/plus now (joda/millis 1000))
+        (= "a second" cleaned-timeword) (joda/plus now (joda/millis 1000))
+        (= "a min" cleaned-timeword) (joda/plus now (joda/minutes 1))
+        (= "a minute" cleaned-timeword) (joda/plus now (joda/minutes 1))
+        (= "a hour" cleaned-timeword) (joda/plus now (joda/hours 1))
+        (= "an hour" cleaned-timeword) (joda/plus now (joda/hours 1))
+        (= "a day" cleaned-timeword) (joda/plus now (joda/days 1))
+        (= "a week" cleaned-timeword) (joda/plus now (joda/days 7))
+        (= "a month" cleaned-timeword) (joda/plus now (joda/months 1))
+        (= "a year" cleaned-timeword) (joda/plus now (joda/years 1))
+        :else nil))))
+
 (defn parse-relative-date [s]
   ;; TODO: implement parsing of such timeword as "32 mins ago".
   (cond
@@ -118,6 +149,7 @@
     (= "yesterday" s) (-> (joda/now) (joda/minus (joda/days 1)) (date-to-str-seq))
     (= "tomorrow" s) (-> (joda/now) (joda/plus (joda/days 1)) (date-to-str-seq))
     (re-find #"ago" s) (-> s (parse-some-time-ago) (date-to-str-seq))
+    (re-find #"from now" s) (-> s (parse-some-time-from-now) (date-to-str-seq))
     :else nil))
 
 (defn is-relative-date? [s]
