@@ -165,6 +165,7 @@
   ;; TODO: implement parsing of such timeword as "32 mins ago".
   (cond
     (= "now" s) (-> (joda/now) (date-to-str-seq))
+    (= "today" s) (-> (joda/now) (date-to-str-seq))
     (= "yesterday" s) (-> (joda/now) (joda/minus (joda/days 1)) (date-to-str-seq))
     (= "tomorrow" s) (-> (joda/now) (joda/plus (joda/days 1)) (date-to-str-seq))
     (re-find #"ago" s) (-> s (parse-some-time-ago) (date-to-str-seq))

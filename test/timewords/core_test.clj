@@ -86,8 +86,10 @@
     (is (= (date 2016 2 24 0 1) (parse "Wed Feb 24 2016 00:01 UTC+1201")))
 
     (let [delta 1000]
-      ; past
+      ; now
       (is (> delta (- (tc/to-long (joda/now)) (tc/to-long (parse "now")))))
+      (is (> delta (- (tc/to-long (joda/now)) (tc/to-long (parse "today")))))
+      ; past
       (is (> delta (- (tc/to-long (joda/minus (joda/now) (joda/seconds 1))) (tc/to-long (parse "a sec ago")))))
       (is (> delta (- (tc/to-long (joda/minus (joda/now) (joda/seconds 1))) (tc/to-long (parse "1 sec ago")))))
       (is (> delta (- (tc/to-long (joda/minus (joda/now) (joda/seconds 1))) (tc/to-long (parse "1 second ago")))))
