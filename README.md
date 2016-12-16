@@ -11,7 +11,7 @@ Library to parse date string to java.util.Date object.
 Add a dependency to your `project.clj`:
 
 ```clojure
-[lt.tokenmill/timewords "0.1.6"]
+[lt.tokenmill/timewords "0.1.7"]
 ```
 
 ```clojure
@@ -24,7 +24,9 @@ Add a dependency to your `project.clj`:
 (timewords.core/parse "2 weeks ago")
 => #inst"2016-11-29T09:52:23.000-00:00"
 (timewords.core/parse "2 weeks from now")
-=> #inst"2016-1č-29T09:54:23.000-00:00"
+=> #inst"2016-12-29T09:54:23.000-00:00"
+(timewords.core/parse "last monday")
+=> #inst"2016-12-12T09:54:23.000-00:00"
 ```
 
 ## Java
@@ -47,7 +49,7 @@ Add a maven dependency to your `pom.xml`:
 <dependency>
     <groupId>lt.tokenmill</groupId>
     <artifactId>timewords</artifactId>
-    <version>0.1.6</version>
+    <version>0.1.7</version>
 </dependency>
 ```
 
