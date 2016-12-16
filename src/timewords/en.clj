@@ -1,7 +1,8 @@
 (ns timewords.en
   (:require [clojure.string :as s]
             [clj-time.core :as joda]
-            [clj-time.coerce :as tc]))
+            [clj-time.coerce :as tc]
+            [clj-time.predicates :as tp]))
 
 (def months
   {#"(january)|(jan.)"    "1"
@@ -142,6 +143,24 @@
         (= "a year" cleaned-timeword) (joda/plus now (joda/years 1))
         :else nil))))
 
+(defn parse-last-weekday
+  [^String s]
+  (let [reference-datetime (joda/now)
+        is-required-weekday? (cond
+                            (re-find #"monday" s) tp/monday?
+                            (re-find #"tuesday" s) tp/tuesday?
+                            (re-find #"wednesday" s) tp/wednesday?
+                            (re-find #"thursday" s) tp/thursday?
+                            (re-find #"friday" s) tp/friday?
+                            (re-find #"saturday" s) tp/saturday?
+                            (re-find #"sunday" s) tp/sunday?)]
+    (if (is-required-weekday? reference-datetime)
+      (joda/minus reference-datetime (joda/days 7))
+      (loop [datetime reference-datetime]
+        (if (is-required-weekday? datetime)
+          datetime
+          (recur (joda/minus datetime (joda/days 1))))))))
+
 (defn parse-relative-date [s]
   ;; TODO: implement parsing of such timeword as "32 mins ago".
   (cond
@@ -150,6 +169,7 @@
     (= "tomorrow" s) (-> (joda/now) (joda/plus (joda/days 1)) (date-to-str-seq))
     (re-find #"ago" s) (-> s (parse-some-time-ago) (date-to-str-seq))
     (re-find #"from now" s) (-> s (parse-some-time-from-now) (date-to-str-seq))
+    (re-find #"last (monday|tuesday|wednesday|thursday|friday|saturday|sunday)" s) (-> s (parse-last-weekday) (date-to-str-seq))
     :else nil))
 
 (defn is-relative-date? [s]

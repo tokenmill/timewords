@@ -12,6 +12,6 @@
 
 (defn clean [date]
   (-> date
-      (remove-day-names)
+      ;(remove-day-names)
       (clean-with-regex)
       (s/trim)))
