@@ -23,7 +23,7 @@
             (standard/to-date clean-date-string)
             (fuzzy/to-date clean-date-string)))))
     (catch Exception e
-      (prn (str "Caught exception: '" (.getMessage e) "', while parsing timeword" date-string "."))
+      (prn (str "Caught exception: '" (.getMessage e) "', while parsing timeword '" date-string "'."))
       nil)))
 
 (defn -parse [_ date-string] (parse date-string))
