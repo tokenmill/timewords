@@ -2,7 +2,7 @@
 
 [![Clojars Project](https://img.shields.io/clojars/v/lt.tokenmill/timewords.svg)](https://clojars.org/lt.tokenmill/timewords)
 
-Library to parse date string to java.util.Date object.
+Library to parse date string to java.util.Date object. When library cannot parse string it returns `nil`.
 
 # Usage
  
@@ -11,7 +11,7 @@ Library to parse date string to java.util.Date object.
 Add a dependency to your `project.clj`:
 
 ```clojure
-[lt.tokenmill/timewords "0.1.7"]
+[lt.tokenmill/timewords "0.1.8"]
 ```
 
 ```clojure
@@ -49,7 +49,7 @@ Add a maven dependency to your `pom.xml`:
 <dependency>
     <groupId>lt.tokenmill</groupId>
     <artifactId>timewords</artifactId>
-    <version>0.1.7</version>
+    <version>0.1.8</version>
 </dependency>
 ```
 
