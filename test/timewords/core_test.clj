@@ -170,7 +170,10 @@
     (is (= nil (parse "next saturday")))
     (is (= nil (parse "next sunday")))
 
+    ; nonsenses should return nil
     (is (= nil (parse "makes no sense")))
+    (is (= nil (parse "2013-40-12")))
+
     (is (= nil (parse "last year")))
     (is (= nil (parse "previous year")))
     (is (= nil (parse "next year")))))
