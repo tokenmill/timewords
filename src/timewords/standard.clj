@@ -27,7 +27,8 @@
        (formats/parse)
        (map from-date)
        ; for cases where multiple patterns match
-       (filter #(< 1970 (t/year %)))
+       (sort)
+       (reverse)
        (first)))
 
 (defn to-date [^String date]
