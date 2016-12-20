@@ -1,8 +1,7 @@
 (ns timewords.en
   (:require [clojure.string :as s]
             [clj-time.core :as joda]
-            [clj-time.coerce :as tc]
-            [clj-time.predicates :as tp]))
+            [clj-time.coerce :as tc]))
 
 (def months
   {#"(january)|(jan.)"    "1"
@@ -146,32 +145,33 @@
 (defn parse-last-weekday
   [^String s]
   (let [reference-datetime (joda/now)
-        is-required-weekday? (cond
-                            (re-find #"monday" s) tp/monday?
-                            (re-find #"tuesday" s) tp/tuesday?
-                            (re-find #"wednesday" s) tp/wednesday?
-                            (re-find #"thursday" s) tp/thursday?
-                            (re-find #"friday" s) tp/friday?
-                            (re-find #"saturday" s) tp/saturday?
-                            (re-find #"sunday" s) tp/sunday?)]
-    (if (is-required-weekday? reference-datetime)
+        required-weekday (cond
+                           (re-find #"monday" s) 1
+                           (re-find #"tuesday" s) 2
+                           (re-find #"wednesday" s) 3
+                           (re-find #"thursday" s) 4
+                           (re-find #"friday" s) 5
+                           (re-find #"saturday" s) 6
+                           (re-find #"sunday" s) 7)]
+    (if (= required-weekday (joda/day-of-week reference-datetime))
       (joda/minus reference-datetime (joda/days 7))
       (loop [datetime reference-datetime]
-        (if (is-required-weekday? datetime)
+        (if (= required-weekday (joda/day-of-week datetime))
           datetime
           (recur (joda/minus datetime (joda/days 1))))))))
 
 (defn parse-relative-date [s]
   ;; TODO: implement parsing of such timeword as "32 mins ago".
-  (cond
-    (= "now" s) (-> (joda/now) (date-to-str-seq))
-    (= "today" s) (-> (joda/now) (date-to-str-seq))
-    (= "yesterday" s) (-> (joda/now) (joda/minus (joda/days 1)) (date-to-str-seq))
-    (= "tomorrow" s) (-> (joda/now) (joda/plus (joda/days 1)) (date-to-str-seq))
-    (re-find #"ago" s) (-> s (parse-some-time-ago) (date-to-str-seq))
-    (re-find #"from now" s) (-> s (parse-some-time-from-now) (date-to-str-seq))
-    (re-find #"last (monday|tuesday|wednesday|thursday|friday|saturday|sunday)" s) (-> s (parse-last-weekday) (date-to-str-seq))
-    :else nil))
+  (let [s (s/lower-case s)]
+    (cond
+     (= "now" s) (-> (joda/now) (date-to-str-seq))
+     (= "today" s) (-> (joda/now) (date-to-str-seq))
+     (= "yesterday" s) (-> (joda/now) (joda/minus (joda/days 1)) (date-to-str-seq))
+     (= "tomorrow" s) (-> (joda/now) (joda/plus (joda/days 1)) (date-to-str-seq))
+     (re-find #"ago" s) (-> s (parse-some-time-ago) (date-to-str-seq))
+     (re-find #"from now" s) (-> s (parse-some-time-from-now) (date-to-str-seq))
+     (re-find #"last (monday|tuesday|wednesday|thursday|friday|saturday|sunday)" s) (-> s (parse-last-weekday) (date-to-str-seq))
+     :else nil)))
 
 (defn is-relative-date? [s]
   ;; Here list of words for relative time is not extensive
