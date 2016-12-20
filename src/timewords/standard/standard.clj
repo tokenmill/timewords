@@ -1,8 +1,8 @@
-(ns timewords.standard
+(ns timewords.standard.standard
   (:require [clojure.string :as s]
             [clj-time.core :as t]
             [clj-time.coerce :refer [from-date]]
-            [timewords.formats :as formats]))
+            [timewords.standard.formats :as formats]))
 
 (def date-part-normalizations
   {#"(?i)p\.m\." "PM"

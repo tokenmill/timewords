@@ -1,11 +1,10 @@
 (ns timewords.core
   (:require [clojure.string :as s]
-            [clj-time.core :refer [date-time now year month day]]
+            [clj-time.core :refer [date-time year month day]]
             [clj-time.coerce :as jco]
-            [timewords.standard :as standard]
-            [timewords.fuzzy :as fuzzy]
-            [timewords.en :as en]
-            [timewords.cleaner :refer [clean]])
+            [timewords.standard.standard :as standard]
+            [timewords.fuzzy.fuzzy :as fuzzy]
+            [timewords.utils.cleaner :refer [clean]])
   (:import (java.util Date))
   (:gen-class
     :name lt.tokenmill.timewords.Timewords
@@ -13,7 +12,7 @@
 
 (defn parse
   "Given a string that represents date, returns a java.util.Date object.
-  Cases that are not handled returns nil."
+  Cases that are not handled return nil."
   ^Date [^String date-string]
   (try
     (when (not (s/blank? date-string))

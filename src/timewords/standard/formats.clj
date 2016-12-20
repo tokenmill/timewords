@@ -1,4 +1,4 @@
-(ns timewords.formats
+(ns timewords.standard.formats
   (:import (java.text SimpleDateFormat)
            (java.util TimeZone)))
 

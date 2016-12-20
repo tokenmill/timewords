@@ -1,6 +1,6 @@
-(ns timewords.cleaner
-  (:require [clojure.string :as s]
-            [timewords.en :as en]))
+(ns timewords.utils.cleaner
+  (:require [clojure.string :as s]))
+
 (defn- remove-day-names
   "Remove all language specific patterns which usualy accompany publication date"
   [date]
