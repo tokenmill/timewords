@@ -11,7 +11,7 @@ Library to parse date string to java.util.Date object. When library cannot parse
 Add a dependency to your `project.clj`:
 
 ```clojure
-[lt.tokenmill/timewords "0.1.9"]
+[lt.tokenmill/timewords "0.1.10"]
 ```
 
 ```clojure
@@ -53,7 +53,7 @@ Add a maven dependency to your `pom.xml`:
 <dependency>
     <groupId>lt.tokenmill</groupId>
     <artifactId>timewords</artifactId>
-    <version>0.1.9</version>
+    <version>0.1.10</version>
 </dependency>
 ```
 
