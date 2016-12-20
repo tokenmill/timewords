@@ -160,18 +160,66 @@
           datetime
           (recur (joda/minus datetime (joda/days 1))))))))
 
+(defn parse-last-month
+  [^String s]
+  (let [reference-datetime (joda/now)
+        required-month (cond
+                           (re-find #"january" s) 1
+                           (re-find #"february" s) 2
+                           (re-find #"march" s) 3
+                           (re-find #"april" s) 4
+                           (re-find #"may" s) 5
+                           (re-find #"june" s) 6
+                           (re-find #"july" s) 7
+                           (re-find #"august" s) 8
+                           (re-find #"september" s) 9
+                           (re-find #"october" s) 10
+                           (re-find #"november" s) 11
+                           (re-find #"december" s) 12)]
+    (if (= required-month (joda/month reference-datetime))
+      (joda/minus reference-datetime (joda/months 12))
+      (loop [datetime reference-datetime]
+        (if (= required-month (joda/month datetime))
+          datetime
+          (recur (joda/minus datetime (joda/months 1))))))))
+
+(defn parse-last-season
+  [^String s]
+  (let [reference-datetime (joda/now)
+        required-season (cond
+                         (re-find #"spring" s) 1
+                         (re-find #"summer" s) 2
+                         (re-find #"autumn" s) 3
+                         (re-find #"fall" s) 3
+                         (re-find #"winter" s) 4)
+        month->season (fn [month]
+                        (cond
+                          (<= 3 month 5) 1
+                          (<= 6 month 8) 2
+                          (<= 9 month 11) 3
+                          (<= 1 month 2) 4
+                          (= 12 month ) 4))]
+    (if (= required-season (month->season (joda/month reference-datetime)))
+      (joda/minus reference-datetime (joda/months 12))
+      (loop [datetime reference-datetime]
+        (if (= required-season (month->season (joda/month datetime)))
+          datetime
+          (recur (joda/minus datetime (joda/months 1))))))))
+
 (defn parse-relative-date [s]
-  ;; TODO: implement parsing of such timeword as "32 mins ago".
   (let [s (s/lower-case s)]
     (cond
-     (= "now" s) (-> (joda/now) (date-to-str-seq))
-     (= "today" s) (-> (joda/now) (date-to-str-seq))
-     (= "yesterday" s) (-> (joda/now) (joda/minus (joda/days 1)) (date-to-str-seq))
-     (= "tomorrow" s) (-> (joda/now) (joda/plus (joda/days 1)) (date-to-str-seq))
-     (re-find #"ago" s) (-> s (parse-some-time-ago) (date-to-str-seq))
-     (re-find #"from now" s) (-> s (parse-some-time-from-now) (date-to-str-seq))
-     (re-find #"last (monday|tuesday|wednesday|thursday|friday|saturday|sunday)" s) (-> s (parse-last-weekday) (date-to-str-seq))
-     :else nil)))
+      (= "now" s) (-> (joda/now) (date-to-str-seq))
+      (= "today" s) (-> (joda/now) (date-to-str-seq))
+      (= "yesterday" s) (-> (joda/now) (joda/minus (joda/days 1)) (date-to-str-seq))
+      (= "tomorrow" s) (-> (joda/now) (joda/plus (joda/days 1)) (date-to-str-seq))
+      (re-find #"ago" s) (-> s (parse-some-time-ago) (date-to-str-seq))
+      (re-find #"from now" s) (-> s (parse-some-time-from-now) (date-to-str-seq))
+      (= "last month" s) (-> (joda/now) (joda/minus (joda/months 1)) (date-to-str-seq))
+      (re-find #"last (monday|tuesday|wednesday|thursday|friday|saturday|sunday)" s) (-> s (parse-last-weekday) (date-to-str-seq))
+      (re-find #"last (january|february|march|april|may|june|july|august|september|october|november|december)" s) (-> s (parse-last-month) (date-to-str-seq))
+      (re-find #"last (spring|summer|autumn|fall|winter)" s) (-> s (parse-last-season) (date-to-str-seq))
+      :else nil)))
 
 (defn is-relative-date? [s]
   ;; Here list of words for relative time is not extensive

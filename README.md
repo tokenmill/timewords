@@ -27,6 +27,10 @@ Add a dependency to your `project.clj`:
 => #inst"2016-12-29T09:54:23.000-00:00"
 (timewords.core/parse "last monday")
 => #inst"2016-12-12T09:54:23.000-00:00"
+(timewords.core/parse "last june")
+=> #inst"2016-06-12T09:54:23.000-00:00"
+(timewords.core/parse "last spring")
+=> #inst"2016-05-12T09:54:23.000-00:00"
 ```
 
 ## Java
