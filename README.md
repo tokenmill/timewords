@@ -69,4 +69,4 @@ Note that `timewords` depends on `org.clojure/clojure` which must be provided.
 
 # TODO
 
-TODO: relative dates e.g. "last Friday", are not handled.
+TODO: relative dates e.g. "next Friday", are not handled.
