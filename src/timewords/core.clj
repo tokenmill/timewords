@@ -30,7 +30,8 @@
               (standard/to-date clean-date-string language document-time)
               (fuzzy/to-date clean-date-string language document-time))))))
     (catch Exception e
-      (prn (str "Caught exception: '" (.getMessage e) "', while parsing timeword '" date-string "'."))
+      (prn (str "Caught exception: '" (.getMessage e) "', while parsing timeword '" date-string
+                " with language '" language " and with document-time '" document-time "'."))
       nil)))
 
 (defn -parse
