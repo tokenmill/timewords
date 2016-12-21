@@ -33,5 +33,6 @@
       (prn (str "Caught exception: '" (.getMessage e) "', while parsing timeword '" date-string "'."))
       nil)))
 
-(defn -parse ^Date [_ ^String date-string & [^String language ^Date document-time]]
-  (parse date-string language))
+(defn -parse
+  ^Date [_ ^String date-string & [^String language ^Date document-time]]
+  (parse date-string language document-time))
