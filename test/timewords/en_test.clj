@@ -1,6 +1,7 @@
 (ns timewords.en-test
   (:require [clojure.test :refer :all]
-            [timewords.fuzzy.en.en :refer :all]))
+            [timewords.fuzzy.en.en :refer :all]
+            [timewords.fuzzy.en.absolute :refer :all]))
 
 (deftest en-test
 

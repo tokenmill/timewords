@@ -3,7 +3,7 @@
             [clj-time.core :as joda :refer [date-time]]
             [clj-time.coerce :as tc]
             [timewords.core :refer :all])
-  (:import (org.joda.time DateTime)))
+  (:import (java.util Date)))
 
 (defn date [& xs] (.toDate (apply date-time xs)))
 
@@ -219,4 +219,5 @@
     (is (= nil (parse "last year")))
     (is (= nil (parse "previous year")))
     (is (= nil (parse "next month")))
-    (is (= nil (parse "next year")))))
+    (is (= nil (parse "next year" "en")))
+    (is (= nil (parse "next year" "en" (Date.))))))

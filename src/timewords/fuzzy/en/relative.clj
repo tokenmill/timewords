@@ -1,4 +1,4 @@
-(ns timewords.fuzzy.en.relative.parser
+(ns timewords.fuzzy.en.relative
   (:require [clojure.string :as s]
             [clj-time.core :as joda]
             [clj-time.coerce :as tc]))
