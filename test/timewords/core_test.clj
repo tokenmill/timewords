@@ -29,7 +29,8 @@
     (is (= (date 2010 8) (parse "August 2010")))
     (is (= (date 2013) (parse "2013")))
     (is (= (date 2010  7  8 0  0  0) (parse "8th July 2010")))
-    (is (= (date 2016  2  29 0  0  0) (parse "29th February 2016"))))
+    (is (= (date 2016  2 29 0  0  0) (parse "29th February 2016")))
+    (is (= (date 2017  1  1 0  0  0) (parse "Sunday, 1st January 2017"))))
 
   (testing "EN date parsing"
     (is (= (date 2015 10 19 21 44) (parse "Mon Oct 19, 2015 5:44pm EDT")))
@@ -95,6 +96,7 @@
       ; past
       (is (> delta (- (tc/to-long (joda/minus (joda/now) (joda/millis 1000))) (tc/to-long (parse "a sec ago")))))
       (is (> delta (- (tc/to-long (joda/minus (joda/now) (joda/millis 1000))) (tc/to-long (parse "1 sec ago")))))
+      (is (> delta (- (tc/to-long (joda/minus (joda/now) (joda/millis 1000))) (tc/to-long (parse "a second ago")))))
       (is (> delta (- (tc/to-long (joda/minus (joda/now) (joda/millis 1000))) (tc/to-long (parse "1 second ago")))))
       (is (> delta (- (tc/to-long (joda/minus (joda/now) (joda/millis 16000))) (tc/to-long (parse "16 secs ago")))))
       (is (> delta (- (tc/to-long (joda/minus (joda/now) (joda/millis 16000))) (tc/to-long (parse "16 seconds ago")))))
@@ -127,7 +129,9 @@
       (is (> delta (- (tc/to-long (joda/minus (joda/now) (joda/years 1))) (tc/to-long (parse "1 year ago")))))
       (is (> delta (- (tc/to-long (joda/minus (joda/now) (joda/years 2))) (tc/to-long (parse "2 years ago")))))
       ; future
+      (is (> delta (- (tc/to-long (joda/plus (joda/now) (joda/millis 1000))) (tc/to-long (parse "a sec from now")))))
       (is (> delta (- (tc/to-long (joda/plus (joda/now) (joda/millis 1000))) (tc/to-long (parse "1 sec from now")))))
+      (is (> delta (- (tc/to-long (joda/plus (joda/now) (joda/millis 1000))) (tc/to-long (parse "a second from now")))))
       (is (> delta (- (tc/to-long (joda/plus (joda/now) (joda/millis 1000))) (tc/to-long (parse "1 second from now")))))
       (is (> delta (- (tc/to-long (joda/plus (joda/now) (joda/millis 16000))) (tc/to-long (parse "16 secs from now")))))
       (is (> delta (- (tc/to-long (joda/plus (joda/now) (joda/millis 16000))) (tc/to-long (parse "16 seconds from now")))))

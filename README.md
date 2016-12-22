@@ -2,7 +2,11 @@
 
 [![Clojars Project](https://img.shields.io/clojars/v/lt.tokenmill/timewords.svg)](https://clojars.org/lt.tokenmill/timewords)
 
-Library to parse date string to java.util.Date object. When library cannot parse string it returns `nil`.
+Library to parse a date string to java.util.Date object. When the library cannot parse the input string it returns *`nil`*.
+
+More formally, from for types of temporal expressions: *time*, *duration*, *interval*, and *set*; only one type is of interest: *time*. Also, *time* type can be divided into two subtypes: fuzzy (e.g. last Sunday) and absolute (1st of January, 2017). To parse a fuzzy time string a *document time* (i.e. a `java.util.Date object`) is required. By default, document time is ``now``. 
+
+The library is designed to support multiple languages. Currently two languages are supported: English and Lithuanian.
 
 # Usage
  
@@ -36,6 +40,11 @@ Add a dependency to your `project.clj`:
 => #inst"2016-02-29T00:00:00.000-00:00"
 (timewords.core/parse "29th February 2017")
 => #inst"2017-02-01T00:00:00.000-00:00"
+(timewords.core/parse "Sunday, 1st January 2017")
+=> #inst"2017-01-01T00:00:00.000-00:00"
+
+(timewords.core/parse "2016 m. gruodžio 22 d. 11:10" "lt")
+=> #inst"2016-12-22T11:10:00.000-00:00"
 ```
 
 ## Java
@@ -67,7 +76,9 @@ import lt.tokenmill.timewords.Timewords;
 
 public static void main(String[] args) {
     Timewords timewords = new Timewords();
-    Date date = timewords.parse("2001-01-01");
+    Date d1 = timewords.parse("2001-01-01");
+    Date d2 = timewords.parse("2001-01-01", "en");
+    Date d3 = timewords.parse("2001-01-01", "en", new Date());
 }
 ```
 Note that `timewords` depends on `org.clojure/clojure` which must be provided.

@@ -1,6 +1,7 @@
 (ns timewords.fuzzy.fuzzy
   (:require [clj-time.core :refer [date-time]]
-            [timewords.fuzzy.en.en :as en])
+            [timewords.fuzzy.en.en :as en]
+            [timewords.fuzzy.lt.lt :as lt])
   (:import (org.joda.time DateTime)))
 
 (defn to-date
@@ -13,5 +14,7 @@
   (^DateTime [^String fuzzy-date & [^String language ^DateTime document-time]]
    (cond
      (= language "en") (if-let [date-parts (en/parse-date fuzzy-date document-time)]
+                         (apply date-time (map #(Integer/parseInt %) date-parts)))
+     (= language "lt") (if-let [date-parts (lt/parse-date fuzzy-date document-time)]
                          (apply date-time (map #(Integer/parseInt %) date-parts)))
      :else nil)))
