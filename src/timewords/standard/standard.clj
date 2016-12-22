@@ -2,7 +2,8 @@
   (:require [clojure.string :as s]
             [clj-time.core :as t]
             [clj-time.coerce :refer [from-date]]
-            [timewords.standard.formats :as formats])
+            [timewords.standard.formats :as formats]
+            [timewords.standard.utils :as utils])
   (:import (org.joda.time DateTime)))
 
 (def date-part-normalizations
@@ -36,6 +37,7 @@
   [^String date & [^String language ^DateTime document-time]]
   (when-not (empty? date)
     (-> date
+        utils/clean
         clean-date-string
         normalize-date-parts
         multi-format-parse)))

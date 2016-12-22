@@ -1,6 +1,6 @@
 (ns timewords.cleaner-test
   (:require [clojure.test :refer :all]
-            [timewords.utils.cleaner :refer [clean]]))
+            [timewords.fuzzy.en.utils :refer [clean]]))
 
 (deftest cleaner-test
   (testing "Dirty dates"

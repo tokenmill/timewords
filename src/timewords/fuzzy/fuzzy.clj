@@ -11,10 +11,10 @@
     19??-20?? for years.
 
     Dispatches parsing by language. Default language is en."
-  (^DateTime [^String fuzzy-date & [^String language ^DateTime document-time]]
-   (cond
-     (= language "en") (if-let [date-parts (en/parse-date fuzzy-date document-time)]
-                         (apply date-time (map #(Integer/parseInt %) date-parts)))
-     (= language "lt") (if-let [date-parts (lt/parse-date fuzzy-date document-time)]
-                         (apply date-time (map #(Integer/parseInt %) date-parts)))
-     :else nil)))
+  ^DateTime [^String fuzzy-date & [^String language ^DateTime document-time]]
+  (cond
+    (= language "en") (if-let [date-parts (en/parse-date fuzzy-date document-time)]
+                        (apply date-time (map #(Integer/parseInt %) date-parts)))
+    (= language "lt") (if-let [date-parts (lt/parse-date fuzzy-date document-time)]
+                        (apply date-time (map #(Integer/parseInt %) date-parts)))
+    :else nil))

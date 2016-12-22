@@ -2,7 +2,8 @@
   (:require [clojure.string :as s]
             [clj-time.core :as joda]
             [timewords.fuzzy.en.relative :refer [parse-relative-date]]
-            [timewords.fuzzy.en.absolute :refer [parse-absolute-date]])
+            [timewords.fuzzy.en.absolute :refer [parse-absolute-date]]
+            [timewords.fuzzy.en.utils :as utils])
   (:import (org.joda.time DateTime)))
 
 (defn is-relative-date? [s]
@@ -12,7 +13,7 @@
     false))
 
 (defn parse-date [^String s & [^DateTime document-time]]
-  (let [ls (s/lower-case s)
+  (let [ls (-> s (utils/clean) (s/lower-case))
         document-time (or document-time (joda/now))]
     (if (is-relative-date? ls)
       (parse-relative-date ls document-time)

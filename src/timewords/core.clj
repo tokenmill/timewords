@@ -3,8 +3,7 @@
             [clj-time.core :as joda]
             [clj-time.coerce :as jco]
             [timewords.standard.standard :as standard]
-            [timewords.fuzzy.fuzzy :as fuzzy]
-            [timewords.utils.cleaner :refer [clean]])
+            [timewords.fuzzy.fuzzy :as fuzzy])
   (:import (java.util Date)
            (org.joda.time DateTime))
   (:gen-class
@@ -22,13 +21,13 @@
   ^Date [^String date-string & [^String language ^Date document-time]]
   (try
     (let [^String language (or language "en")
-          ^DateTime document-time (or (jco/from-date document-time) (joda/now))]
+          ^DateTime document-time (or (DateTime. document-time) (joda/now))]
       (when (not (s/blank? date-string))
-        (let [clean-date-string (clean date-string)]
-          (jco/to-date
-            (or
-              (standard/to-date clean-date-string language document-time)
-              (fuzzy/to-date clean-date-string language document-time))))))
+
+        (jco/to-date
+          (or
+            (standard/to-date date-string language document-time)
+            (fuzzy/to-date date-string language document-time)))))
     (catch Exception e
       (prn (str "Caught exception: '" (.getMessage e) "', while parsing timeword '" date-string
                 "' with language '" language "' and with document-time '" document-time "'."))
