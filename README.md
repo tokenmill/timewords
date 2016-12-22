@@ -15,7 +15,7 @@ The library is designed to support multiple languages. Currently two languages a
 Add a dependency to your `project.clj`:
 
 ```clojure
-[lt.tokenmill/timewords "0.2.0"]
+[lt.tokenmill/timewords "0.2.1"]
 ```
 
 ```clojure
@@ -67,7 +67,7 @@ Add a maven dependency to your `pom.xml`:
 <dependency>
     <groupId>lt.tokenmill</groupId>
     <artifactId>timewords</artifactId>
-    <version>0.2.0</version>
+    <version>0.2.1</version>
 </dependency>
 ```
 
