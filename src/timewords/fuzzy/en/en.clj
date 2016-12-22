@@ -16,4 +16,4 @@
         document-time (or document-time (joda/now))]
     (if (is-relative-date? ls)
       (parse-relative-date ls document-time)
-      (parse-absolute-date ls))))
+      (parse-absolute-date ls document-time))))

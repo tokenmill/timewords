@@ -15,7 +15,7 @@ The library is designed to support multiple languages. Currently two languages a
 Add a dependency to your `project.clj`:
 
 ```clojure
-[lt.tokenmill/timewords "0.1.10"]
+[lt.tokenmill/timewords "0.2.0"]
 ```
 
 ```clojure
@@ -67,7 +67,7 @@ Add a maven dependency to your `pom.xml`:
 <dependency>
     <groupId>lt.tokenmill</groupId>
     <artifactId>timewords</artifactId>
-    <version>0.1.10</version>
+    <version>0.2.0</version>
 </dependency>
 ```
 
@@ -85,4 +85,7 @@ Note that `timewords` depends on `org.clojure/clojure` which must be provided.
 
 # TODO
 
-TODO: relative dates e.g. "next Friday", are not handled.
+TODO: 
+- [ ] relative dates e.g. "next Friday", are not handled.
+- [ ] relative Lithuanian dates.
+

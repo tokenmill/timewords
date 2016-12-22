@@ -1,6 +1,7 @@
 (ns timewords.fuzzy.en.absolute
   (:require [clojure.string :as s]
-            [clj-time.core :as joda]))
+            [clj-time.core :as joda])
+  (:import (org.joda.time DateTime)))
 
 (def months
   {#"(january)|(jan.)"    "1"
@@ -70,9 +71,9 @@
 (defn zecond [fuzzy-date] (second (re-find #"\b\d{2}:\d{2}:(\d{2})\b" fuzzy-date)))
 
 (defn parse-absolute-date
-  [^String ls]
+  [^String ls & [^DateTime document-time]]
   (letfn [(if-conj [coll x] (if x (conj coll x) coll))
-          (now-part [time-part] (time-part (joda/now)))
+          (now-part [time-part] (time-part document-time))
           (add-years [date-parts]
             (conj date-parts
                   (if-let [y (year ls)]
