@@ -6,7 +6,7 @@ Library to parse a date string to java.util.Date object. When the library cannot
 
 More formally, from for types of temporal expressions: *time*, *duration*, *interval*, and *set*; only one type is of interest: *time*. Also, *time* type can be divided into two subtypes: fuzzy (e.g. last Sunday) and absolute (1st of January, 2017). To parse a fuzzy time string a *document time* (i.e. a `java.util.Date object`) is required. By default, document time is ``now``. 
 
-The library is designed to support multiple languages. Currently two languages are supported: English and Lithuanian.
+The library is designed to support multiple languages. Currently two languages are supported: English and Lithuanian. Default language is English.
 
 # Usage
  
