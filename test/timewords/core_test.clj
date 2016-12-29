@@ -225,5 +225,5 @@
     (is (= nil (parse "last year")))
     (is (= nil (parse "previous year")))
     (is (= nil (parse "next month")))
-    (is (= nil (parse "next year" "en")))
-    (is (= nil (parse "next year" "en" (Date.))))))
+    (is (= nil (parse "next year" nil "en")))
+    (is (= nil (parse "next year" (Date.) "en")))))

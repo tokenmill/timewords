@@ -10,14 +10,14 @@
 (deftest lt-dates-test
 
   (testing "Some dates"
-    (is (= (date 2016 12 22 11 10) (parse "2016 m. gruodžio 22 d. 11:10" "lt")))
+    (is (= (date 2016 12 22 11 10) (parse "2016 m. gruodžio 22 d. 11:10" nil "lt")))
     ; TODO: time is not detected.
-    (is (= (date 2013 12  2) (parse " 2013/12/02 8:14" "lt")))
+    (is (= (date 2013 12  2) (parse " 2013/12/02 8:14" nil "lt")))
 
-    (is (= (date 2000  1  3) (parse "2000 sausio 3" "lt")))
-    (is (= (date 2000  1  3 12 13) (parse "2000 sausio 3 12:13" "lt")))
-    (is (= (date 2000  1  3 12 13 14) (parse "2000 sausio 3 12:13:14" "lt")))
-    (is (= (date 1999  3 13) (parse "1999 metų kovo 13" "lt")))
-    (is (= (date (-> (joda/now) (joda/year)) 3  13) (parse "kovo 13" "lt")))
-    (is (= (date 2005 3  13) (parse "kovo 13" "lt" (.toDate (joda/date-time 2005)))))
+    (is (= (date 2000  1  3) (parse "2000 sausio 3" nil "lt")))
+    (is (= (date 2000  1  3 12 13) (parse "2000 sausio 3 12:13" nil "lt")))
+    (is (= (date 2000  1  3 12 13 14) (parse "2000 sausio 3 12:13:14" nil "lt")))
+    (is (= (date 1999  3 13) (parse "1999 metų kovo 13" nil "lt")))
+    (is (= (date (-> (joda/now) (joda/year)) 3  13) (parse "kovo 13" nil "lt")))
+    (is (= (date 2005 3  13) (parse "kovo 13" (.toDate (joda/date-time 2005)) "lt")))
     ))

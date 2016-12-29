@@ -9,8 +9,8 @@
   (:gen-class
     :name lt.tokenmill.timewords.Timewords
     :methods [[parse [java.lang.String] java.util.Date]
-              [parse [java.lang.String java.lang.String] java.util.Date]
-              [parse [java.lang.String java.lang.String java.util.Date] java.util.Date]]))
+              [parse [java.lang.String java.util.Date] java.util.Date]
+              [parse [java.lang.String java.util.Date java.lang.String] java.util.Date]]))
 
 (defn parse
   "Given a string that represents date, returns a java.util.Date object.
@@ -18,12 +18,15 @@
   Second (optional) parameter must be a language code, e.g. `en`.
   Third (optional) parameter is a document-time which must be nil or java.util.Date.
   `document-time` is used to parse relative timewords like 'yesterday'."
-  ^Date [^String date-string & [^String language ^Date document-time]]
+  ^Date [^String date-string & [^Date document-time ^String language]]
   (try
+    (when-not (or (nil? document-time) (= (type (Date.)) (type document-time)))
+      (throw (Exception. "document-time is not either nil or java.util.Date.")))
+    (when-not (or (nil? language) (string? language))
+      (throw (Exception. "language parameter is not either nil or java.lang.String.")))
     (let [^String language (or language "en")
           ^DateTime document-time (or (DateTime. document-time) (joda/now))]
       (when (not (s/blank? date-string))
-
         (jco/to-date
           (or
             (standard/to-date date-string language document-time)
@@ -34,5 +37,5 @@
       nil)))
 
 (defn -parse
-  ^Date [_ ^String date-string & [^String language ^Date document-time]]
-  (parse date-string language document-time))
+  ^Date [_ ^String date-string & [^Date document-time ^String language]]
+  (parse date-string document-time language))
