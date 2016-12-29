@@ -15,7 +15,7 @@ The library is designed to support multiple languages. Currently two languages a
 Add a dependency to your `project.clj`:
 
 ```clojure
-[lt.tokenmill/timewords "0.2.1"]
+[lt.tokenmill/timewords "0.3.0"]
 ```
 
 ```clojure
@@ -43,7 +43,7 @@ Add a dependency to your `project.clj`:
 (timewords.core/parse "Sunday, 1st January 2017")
 => #inst"2017-01-01T00:00:00.000-00:00"
 
-(timewords.core/parse "2016 m. gruodžio 22 d. 11:10" "lt")
+(timewords.core/parse "2016 m. gruodžio 22 d. 11:10" nil "lt")
 => #inst"2016-12-22T11:10:00.000-00:00"
 ```
 
@@ -67,7 +67,7 @@ Add a maven dependency to your `pom.xml`:
 <dependency>
     <groupId>lt.tokenmill</groupId>
     <artifactId>timewords</artifactId>
-    <version>0.2.1</version>
+    <version>0.3.0</version>
 </dependency>
 ```
 
@@ -77,8 +77,8 @@ import lt.tokenmill.timewords.Timewords;
 public static void main(String[] args) {
     Timewords timewords = new Timewords();
     Date d1 = timewords.parse("2001-01-01");
-    Date d2 = timewords.parse("2001-01-01", "en");
-    Date d3 = timewords.parse("2001-01-01", "en", new Date());
+    Date d2 = timewords.parse("2001-01-01", new Date());
+    Date d3 = timewords.parse("2001-01-01", new Date(), "en");
 }
 ```
 Note that `timewords` depends on `org.clojure/clojure` which must be provided.
