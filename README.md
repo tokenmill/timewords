@@ -87,7 +87,15 @@ Note that `timewords` depends on `org.clojure/clojure` which must be provided.
 
 Relative dates that can be understood as a time period, e.g. `last December` are rounded to the beginning of the period, e.g. 'last December' translates to `2016-12-01T00:00:00Z`.
 
-Timeword `in December` is treated as if it refers to the past, i.e. `in December` means `last December`.
+Timewords of the form `in monthname` is interpreted as if it refers to the past, i.e. `in December` means `last December`.
+
+Timewords of the form `this monthname` is interpreted as if it refers to the future, i.e. `in December` means `next December`.
+
+Timeword which is only a name of a weekday, e.g. `Monday`, is interpreted as if it refers to the past, i.e. `Monday` means the same as `last Monday`.
+
+Timeword of the form `next weekday` means the first day in the future which which weekday is the one mentioned, e.g. `next Monday` means the first Monday to come. If today is Monday and we are parsing `next Monday` then it means a date after 7 days. 
+
+Timeword of a form `this weekday`, e.g. `this Monday`, is interpreted as if it refers to the future, i.e. `this Monday` means the same as `next Monday`.
 
 # TODO
 

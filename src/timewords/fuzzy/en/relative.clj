@@ -4,7 +4,33 @@
             [clj-time.coerce :as tc])
   (:import (org.joda.time DateTime)))
 
-(def months "")
+(def special-to-normal {"a sec" "1 second"
+                        "a second" "1 second"
+                        "a min" "1 minute"
+                        "a minute" "1 minute"
+                        "a hour" "1 hour"
+                        "an hour" "1 hour"
+                        "a day" "1 day"
+                        "a week" "7 days"
+                        "a month" "1 month"
+                        "a year" "1 year"
+                        "yesterday" "1 day ago"
+                        "tomorrow" "1 day from now"
+                        "this week" "last monday"
+                        "last month" "1 month ago"
+                        "previous month" "1 month ago"
+                        "next month" "1 month from now"
+                        "this month" "0 months ago"
+                        "last year" "1 year ago"
+                        "next year" "1 year from now"
+                        "this year" "0 years ago"
+                        "previous year" "1 year ago"
+                        "now" "0 seconds ago"
+                        "today" "0 days ago"})
+
+(defn get-seconds [joda-datetime]
+  (-> joda-datetime (tc/to-long) (mod 60000) (quot 1000)))
+
 (defn date-to-str-seq
   [joda-datetime]
   (when (not (nil? joda-datetime))
@@ -13,8 +39,32 @@
               (joda/day joda-datetime)
               (joda/hour joda-datetime)
               (joda/minute joda-datetime)
-              (-> joda-datetime (tc/to-long) (mod 60000) (quot 1000)) ;to avoid using joda/seconds
+              (get-seconds joda-datetime) ;to avoid using joda/seconds
               ])))
+
+
+(defn ^DateTime floor
+  "Floors the given date-time dt to the given time unit dt-fn,
+  e.g. (floor (now) hour) returns (now) for all units
+  up to and including the hour"
+  [^DateTime dt dt-fn]
+  (let [dt-fns [joda/year joda/month joda/day joda/hour joda/minute get-seconds joda/milli]]
+    (apply joda/date-time
+           (map apply
+                (concat (take-while (partial not= dt-fn) dt-fns) [dt-fn])
+                (repeat [dt])))))
+
+(defn parse-relative-time [cleaned-timeword document-time plus-or-minus]
+  (let [amount (Integer/parseInt (re-find #"\d+" cleaned-timeword))]
+    (cond
+      (re-find #"\d+s$|sec|secs|second|seconds" cleaned-timeword) (-> (plus-or-minus document-time (joda/millis (* amount 1000))) (floor get-seconds))
+      (re-find #"\d+m$|min|mins|minute|minutes" cleaned-timeword) (-> (plus-or-minus document-time (joda/minutes amount)) (floor joda/minute))
+      (re-find #"\d+h$|hour|hours" cleaned-timeword) (-> (plus-or-minus document-time (joda/hours amount)) (floor joda/hour))
+      (re-find #"\d+d$|day|days" cleaned-timeword) (-> (plus-or-minus document-time (joda/days amount)) (floor joda/day))
+      (re-find #"\d+w$|week|weeks" cleaned-timeword) (-> (plus-or-minus document-time (joda/days (* 7 amount))) (floor joda/day))
+      (re-find #"month|months" cleaned-timeword) (-> (plus-or-minus document-time (joda/months amount)) (floor joda/month))
+      (re-find #"year|years" cleaned-timeword) (-> (plus-or-minus document-time (joda/years amount)) (floor joda/year))
+      :else nil)))
 
 (defn parse-some-time-ago
   "Handle strings like '32 mins ago'."
@@ -22,30 +72,9 @@
   ([s document-time]
    (let [cleaned-timeword (-> s (s/replace "ago" "") (s/trim))]
      (if (re-find #"\d+" s)
-       (let [amount (Integer/parseInt (re-find #"\d+" s))]
-         ; normal cases
-         (cond
-           (re-find #"\d+s$|sec|secs|second|seconds" cleaned-timeword) (joda/minus document-time (joda/millis (* amount 1000)))
-           (re-find #"\d+m$|min|mins|minute|minutes" cleaned-timeword) (joda/minus document-time (joda/minutes amount))
-           (re-find #"\d+h$|hour|hours" cleaned-timeword) (joda/minus document-time (joda/hours amount))
-           (re-find #"\d+d$|day|days" cleaned-timeword) (joda/minus document-time (joda/days amount))
-           (re-find #"\d+w$|week|weeks" cleaned-timeword) (joda/minus document-time (joda/days (* 7 amount)))
-           (re-find #"month|months" cleaned-timeword) (joda/minus document-time (joda/months amount))
-           (re-find #"year|years" cleaned-timeword) (joda/minus document-time (joda/years amount))
-           :else nil))
-       (cond
-         ; special cases
-         (= "a sec" cleaned-timeword) (joda/minus document-time (joda/millis 1000))
-         (= "a second" cleaned-timeword) (joda/minus document-time (joda/millis 1000))
-         (= "a min" cleaned-timeword) (joda/minus document-time (joda/minutes 1))
-         (= "a minute" cleaned-timeword) (joda/minus document-time (joda/minutes 1))
-         (= "a hour" cleaned-timeword) (joda/minus document-time (joda/hours 1))
-         (= "an hour" cleaned-timeword) (joda/minus document-time (joda/hours 1))
-         (= "a day" cleaned-timeword) (joda/minus document-time (joda/days 1))
-         (= "a week" cleaned-timeword) (joda/minus document-time (joda/days 7))
-         (= "a month" cleaned-timeword) (joda/minus document-time (joda/months 1))
-         (= "a year" cleaned-timeword) (joda/minus document-time (joda/years 1))
-         :else nil)))))
+       (parse-relative-time cleaned-timeword document-time joda/minus)
+       (when-let [normalized (get special-to-normal cleaned-timeword)]
+         (parse-some-time-ago (str normalized " ago") document-time))))))
 
 (defn parse-some-time-from-now
   "Handle strings like '32 mins from now'."
@@ -53,30 +82,9 @@
   ([^String s ^DateTime document-time]
    (let [cleaned-timeword (-> s (s/replace "from now" "") (s/trim))]
      (if (re-find #"\d+" s)
-       (let [amount (Integer/parseInt (re-find #"\d+" s))]
-         ; normal cases
-         (cond
-           (re-find #"\d+s$|sec|secs|second|seconds" cleaned-timeword) (joda/plus document-time (joda/millis (* amount 1000)))
-           (re-find #"\d+m$|min|mins|minute|minutes" cleaned-timeword) (joda/plus document-time (joda/minutes amount))
-           (re-find #"\d+h$|hour|hours" cleaned-timeword) (joda/plus document-time (joda/hours amount))
-           (re-find #"\d+d$|day|days" cleaned-timeword) (joda/plus document-time (joda/days amount))
-           (re-find #"\d+w$|week|weeks" cleaned-timeword) (joda/plus document-time (joda/days (* 7 amount)))
-           (re-find #"month|months" cleaned-timeword) (joda/plus document-time (joda/months amount))
-           (re-find #"year|years" cleaned-timeword) (joda/plus document-time (joda/years amount))
-           :else nil))
-       (cond
-         ; special cases
-         (= "a sec" cleaned-timeword) (joda/plus document-time (joda/millis 1000))
-         (= "a second" cleaned-timeword) (joda/plus document-time (joda/millis 1000))
-         (= "a min" cleaned-timeword) (joda/plus document-time (joda/minutes 1))
-         (= "a minute" cleaned-timeword) (joda/plus document-time (joda/minutes 1))
-         (= "a hour" cleaned-timeword) (joda/plus document-time (joda/hours 1))
-         (= "an hour" cleaned-timeword) (joda/plus document-time (joda/hours 1))
-         (= "a day" cleaned-timeword) (joda/plus document-time (joda/days 1))
-         (= "a week" cleaned-timeword) (joda/plus document-time (joda/days 7))
-         (= "a month" cleaned-timeword) (joda/plus document-time (joda/months 1))
-         (= "a year" cleaned-timeword) (joda/plus document-time (joda/years 1))
-         :else nil)))))
+       (parse-relative-time cleaned-timeword document-time joda/plus)
+       (when-let [normalized (get special-to-normal cleaned-timeword)]
+         (parse-some-time-from-now (str normalized " from now") document-time))))))
 
 (defn parse-relative-weekday
   [^String s ^DateTime document-time plus-or-minus]
@@ -87,14 +95,14 @@
                            (re-find #"thursday" s) 4
                            (re-find #"friday" s) 5
                            (re-find #"saturday" s) 6
-                           (re-find #"sunday" s) 7)]
-    (joda/with-time-at-start-of-day
-      (if (= required-weekday (joda/day-of-week document-time))
-        (plus-or-minus document-time (joda/days 7))
-        (loop [datetime document-time]
-          (if (= required-weekday (joda/day-of-week datetime))
-            datetime
-            (recur (plus-or-minus datetime (joda/days 1)))))))))
+                           (re-find #"sunday" s) 7)
+        in-required-weekday (if (= required-weekday (joda/day-of-week document-time))
+                              (plus-or-minus document-time (joda/days 7))
+                              (loop [datetime document-time]
+                                (if (= required-weekday (joda/day-of-week datetime))
+                                  datetime
+                                  (recur (plus-or-minus datetime (joda/days 1))))))]
+    (floor in-required-weekday joda/day)))
 
 (defn parse-last-weekday [s document-time]
   (parse-relative-weekday s document-time joda/minus))
@@ -122,9 +130,7 @@
                                          (if (= required-month (joda/month datetime))
                                            datetime
                                            (recur (joda-minus-or-plus datetime (joda/months 1))))))]
-    (-> datetime-with-adjusted-month
-        (joda/first-day-of-the-month)
-        (joda/with-time-at-start-of-day))))
+    (floor datetime-with-adjusted-month joda/month)))
 
 (defn parse-last-month [s document-time]
   (parse-relative-month s document-time joda/minus))
@@ -158,19 +164,18 @@
 (defn parse-relative-date
   ([^String s] (parse-relative-date s (joda/now)))
   ([^String s ^DateTime document-time]
-   (date-to-str-seq
-     (cond
-       (= "now" s) (-> document-time)
-       (= "today" s) (-> document-time (joda/with-time-at-start-of-day))
-       (= "yesterday" s) (-> document-time (joda/minus (joda/days 1)))
-       (= "tomorrow" s) (-> document-time (joda/plus (joda/days 1)))
-       (re-find #"ago" s) (-> s (parse-some-time-ago))
-       (re-find #"from now" s) (-> s (parse-some-time-from-now))
-       (= "last month" s) (-> document-time (joda/minus (joda/months 1)))
-       (re-find #"last (monday|tuesday|wednesday|thursday|friday|saturday|sunday)" s) (-> s (parse-last-weekday document-time))
-       (re-find #"next (monday|tuesday|wednesday|thursday|friday|saturday|sunday)" s) (-> s (parse-next-weekday document-time))
-       (re-find #"last (january|february|march|april|may|june|july|august|september|october|november|december)" s) (-> s (parse-last-month document-time))
-       (re-find #"in (january|february|march|april|may|june|july|august|september|october|november|december)" s) (-> s (parse-last-month document-time))
-       (re-find #"next (january|february|march|april|may|june|july|august|september|october|november|december)" s) (-> s (parse-next-month document-time))
-       (re-find #"last (spring|summer|autumn|fall|winter)" s) (-> s (parse-last-season document-time))
-       :else nil))))
+   (let [s (or (get special-to-normal s) s)]
+     (date-to-str-seq
+       (cond
+         (re-find #"ago" s) (-> s (parse-some-time-ago))
+         (re-find #"from now" s) (-> s (parse-some-time-from-now))
+         (re-find #"^(monday|tuesday|wednesday|thursday|friday|saturday|sunday)$" s) (-> s (parse-last-weekday document-time))
+         (re-find #"last (monday|tuesday|wednesday|thursday|friday|saturday|sunday)" s) (-> s (parse-last-weekday document-time))
+         (re-find #"this (monday|tuesday|wednesday|thursday|friday|saturday|sunday)" s) (-> s (parse-next-weekday document-time))
+         (re-find #"next (monday|tuesday|wednesday|thursday|friday|saturday|sunday)" s) (-> s (parse-next-weekday document-time))
+         (re-find #"last (january|february|march|april|may|june|july|august|september|october|november|december)" s) (-> s (parse-last-month document-time))
+         (re-find #"^in\s(early|late)?\s?(january|february|march|april|may|june|july|august|september|october|november|december)$" s) (-> s (parse-last-month document-time))
+         (re-find #"this (january|february|march|april|may|june|july|august|september|october|november|december)" s) (-> s (parse-next-month document-time))
+         (re-find #"next (january|february|march|april|may|june|july|august|september|october|november|december)" s) (-> s (parse-next-month document-time))
+         (re-find #"last (spring|summer|autumn|fall|winter)" s) (-> s (parse-last-season document-time))
+         :else nil)))))
