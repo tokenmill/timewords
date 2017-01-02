@@ -4,6 +4,7 @@
             [clj-time.coerce :as tc])
   (:import (org.joda.time DateTime)))
 
+(def months "")
 (defn date-to-str-seq
   [joda-datetime]
   (when (not (nil? joda-datetime))
@@ -169,6 +170,7 @@
        (re-find #"last (monday|tuesday|wednesday|thursday|friday|saturday|sunday)" s) (-> s (parse-last-weekday document-time))
        (re-find #"next (monday|tuesday|wednesday|thursday|friday|saturday|sunday)" s) (-> s (parse-next-weekday document-time))
        (re-find #"last (january|february|march|april|may|june|july|august|september|october|november|december)" s) (-> s (parse-last-month document-time))
+       (re-find #"in (january|february|march|april|may|june|july|august|september|october|november|december)" s) (-> s (parse-last-month document-time))
        (re-find #"next (january|february|march|april|may|june|july|august|september|october|november|december)" s) (-> s (parse-next-month document-time))
        (re-find #"last (spring|summer|autumn|fall|winter)" s) (-> s (parse-last-season document-time))
        :else nil))))
