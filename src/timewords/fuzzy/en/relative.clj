@@ -88,12 +88,32 @@
                             (re-find #"friday" s) 5
                             (re-find #"saturday" s) 6
                             (re-find #"sunday" s) 7)]
-     (joda/with-time-at-start-of-day (if (= required-weekday (joda/day-of-week document-time))
-                                       (joda/minus document-time (joda/days 7))
-                                       (loop [datetime document-time]
-                                         (if (= required-weekday (joda/day-of-week datetime))
-                                           datetime
-                                           (recur (joda/minus datetime (joda/days 1))))))))))
+     (joda/with-time-at-start-of-day
+       (if (= required-weekday (joda/day-of-week document-time))
+         (joda/minus document-time (joda/days 7))
+         (loop [datetime document-time]
+           (if (= required-weekday (joda/day-of-week datetime))
+             datetime
+             (recur (joda/minus datetime (joda/days 1))))))))))
+
+(defn parse-next-weekday
+  ([^String s] (parse-next-weekday s (joda/now)))
+  ([^String s ^DateTime document-time]
+   (let [required-weekday (cond
+                            (re-find #"monday" s) 1
+                            (re-find #"tuesday" s) 2
+                            (re-find #"wednesday" s) 3
+                            (re-find #"thursday" s) 4
+                            (re-find #"friday" s) 5
+                            (re-find #"saturday" s) 6
+                            (re-find #"sunday" s) 7)]
+     (joda/with-time-at-start-of-day
+       (if (= required-weekday (joda/day-of-week document-time))
+         (joda/plus document-time (joda/days 7))
+         (loop [datetime document-time]
+           (if (= required-weekday (joda/day-of-week datetime))
+             datetime
+             (recur (joda/plus datetime (joda/days 1))))))))))
 
 (defn parse-last-month
   ([^String s] (parse-last-month s (joda/now)))
@@ -154,6 +174,7 @@
        (re-find #"from now" s) (-> s (parse-some-time-from-now))
        (= "last month" s) (-> document-time (joda/minus (joda/months 1)))
        (re-find #"last (monday|tuesday|wednesday|thursday|friday|saturday|sunday)" s) (-> s (parse-last-weekday document-time))
+       (re-find #"next (monday|tuesday|wednesday|thursday|friday|saturday|sunday)" s) (-> s (parse-next-weekday document-time))
        (re-find #"last (january|february|march|april|may|june|july|august|september|october|november|december)" s) (-> s (parse-last-month document-time) )
        (re-find #"last (spring|summer|autumn|fall|winter)" s) (-> s (parse-last-season document-time))
        :else nil))))

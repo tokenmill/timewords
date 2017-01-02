@@ -8,6 +8,7 @@
   (testing "relative weekdays"
     ; dealing with weekdays
     (let [parsed-datetime (tc/to-date-time (parse "last monday"))]
+      (is (joda/before? parsed-datetime (joda/now)))
       (is (= 1 (joda/day-of-week parsed-datetime)))
       (is (= 0 (joda/hour parsed-datetime)))
       (is (= 0 (joda/minute parsed-datetime)))
@@ -23,13 +24,19 @@
       (is (= 0 (joda/hour parsed-datetime)))
       (is (= 0 (joda/minute parsed-datetime)))
       (is (= 0 (joda/milli parsed-datetime))))
-    (is (= nil (parse "next monday")))
-    (is (= nil (parse "next tuesday")))
-    (is (= nil (parse "next wednesday")))
-    (is (= nil (parse "next thursday")))
-    (is (= nil (parse "next friday")))
-    (is (= nil (parse "next saturday")))
-    (is (= nil (parse "next sunday")))
+
+    (let [parsed-datetime (tc/to-date-time (parse "next monday"))]
+      (is (joda/after? parsed-datetime (joda/now)))
+      (is (= 1 (joda/day-of-week parsed-datetime)))
+      (is (= 0 (joda/hour parsed-datetime)))
+      (is (= 0 (joda/minute parsed-datetime)))
+      (is (= 0 (joda/milli parsed-datetime))))
+    (is (= 2 (joda/day-of-week (tc/to-date-time (parse "next tuesday")))))
+    (is (= 3 (joda/day-of-week (tc/to-date-time (parse "next wednesday")))))
+    (is (= 4 (joda/day-of-week (tc/to-date-time (parse "next thursday")))))
+    (is (= 5 (joda/day-of-week (tc/to-date-time (parse "next friday")))))
+    (is (= 6 (joda/day-of-week (tc/to-date-time (parse "next saturday")))))
+    (is (= 7 (joda/day-of-week (tc/to-date-time (parse "next sunday")))))
 
     ; dealing with months
     (is (= 1 (-> (parse "last january") (tc/to-date-time) (joda/month))))
