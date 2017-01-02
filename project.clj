@@ -1,4 +1,4 @@
-(defproject lt.tokenmill/timewords "0.3.0"
+(defproject lt.tokenmill/timewords "0.4.0"
   :description "Library to parse time strings."
 
   :dependencies [[clj-time "0.12.2"]]
