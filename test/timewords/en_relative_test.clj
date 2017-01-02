@@ -5,6 +5,17 @@
             [timewords.core :refer :all]))
 
 (deftest en-relative
+
+  (testing "special cases"
+    (let [now-datetime (joda/now)
+          parsed-datetime (tc/to-date-time (parse "today"))]
+      (is (= (joda/year now-datetime) (joda/year parsed-datetime)))
+      (is (= (joda/month now-datetime) (joda/month parsed-datetime)))
+      (is (= (joda/day now-datetime) (joda/day parsed-datetime)))
+      (is (= 0 (joda/hour parsed-datetime)))
+      (is (= 0 (joda/minute parsed-datetime)))
+      (is (= 0 (joda/milli parsed-datetime)))))
+
   (testing "relative weekdays"
     ; dealing with weekdays
     (let [parsed-datetime (tc/to-date-time (parse "last monday"))]
@@ -38,8 +49,14 @@
     (is (= 6 (joda/day-of-week (tc/to-date-time (parse "next saturday")))))
     (is (= 7 (joda/day-of-week (tc/to-date-time (parse "next sunday")))))
 
-    ; dealing with months
-    (is (= 1 (-> (parse "last january") (tc/to-date-time) (joda/month))))
+    (testing "relative months"
+      ; dealing with months
+      (let [parsed-datetime (tc/to-date-time (parse "last january"))]
+        (is (joda/before? parsed-datetime (joda/now)))
+        (is (= 1 (-> parsed-datetime (joda/month))))
+        (is (= 1 (-> parsed-datetime (joda/day))))
+        (is (= 0 (-> parsed-datetime (joda/hour))))
+        (is (= 0 (-> parsed-datetime (joda/milli))))))
     (is (= 2 (-> (parse "last february") (tc/to-date-time) (joda/month))))
     (is (= 3 (-> (parse "last march") (tc/to-date-time) (joda/month))))
     (is (= 4 (-> (parse "last april") (tc/to-date-time) (joda/month))))
@@ -51,18 +68,24 @@
     (is (= 10 (-> (parse "last october") (tc/to-date-time) (joda/month))))
     (is (= 11 (-> (parse "last november") (tc/to-date-time) (joda/month))))
     (is (= 12 (-> (parse "last december") (tc/to-date-time) (joda/month))))
-    (is (= nil (parse "next january")))
-    (is (= nil (parse "next february")))
-    (is (= nil (parse "next march")))
-    (is (= nil (parse "next april")))
-    (is (= nil (parse "next may")))
-    (is (= nil (parse "next june")))
-    (is (= nil (parse "next july")))
-    (is (= nil (parse "next august")))
-    (is (= nil (parse "next september")))
-    (is (= nil (parse "next october")))
-    (is (= nil (parse "next november")))
-    (is (= nil (parse "next december")))
+
+    (let [parsed-datetime (-> (parse "next january") (tc/to-date-time))]
+      (is (joda/after? parsed-datetime (joda/now)))
+      (is (= 1 (joda/month parsed-datetime)))
+      (is (= 1 (joda/day parsed-datetime)))
+      (is (= 0 (joda/hour parsed-datetime)))
+      (is (= 0 (joda/milli parsed-datetime))))
+    (is (= 2 (-> (parse "next february") (tc/to-date-time) (joda/month))))
+    (is (= 3 (-> (parse "next march") (tc/to-date-time) (joda/month))))
+    (is (= 4 (-> (parse "next april") (tc/to-date-time) (joda/month))))
+    (is (= 5 (-> (parse "next may") (tc/to-date-time) (joda/month))))
+    (is (= 6 (-> (parse "next june") (tc/to-date-time) (joda/month))))
+    (is (= 7 (-> (parse "next july") (tc/to-date-time) (joda/month))))
+    (is (= 8 (-> (parse "next august") (tc/to-date-time) (joda/month))))
+    (is (= 9 (-> (parse "next september") (tc/to-date-time) (joda/month))))
+    (is (= 10 (-> (parse "next october") (tc/to-date-time) (joda/month))))
+    (is (= 11 (-> (parse "next november") (tc/to-date-time) (joda/month))))
+    (is (= 12 (-> (parse "next december") (tc/to-date-time) (joda/month))))
 
     ; seasons
     (is (<= 3 (-> (parse "last spring") (tc/to-date-time) (joda/month)) 5))

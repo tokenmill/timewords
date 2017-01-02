@@ -92,7 +92,6 @@
     (let [delta 1000]
       ; now
       (is (> delta (- (tc/to-long (joda/now)) (tc/to-long (parse "now")))))
-      (is (> delta (- (tc/to-long (joda/now)) (tc/to-long (parse "today")))))
       ; past
       (is (> delta (- (tc/to-long (joda/minus (joda/now) (joda/millis 1000))) (tc/to-long (parse "a sec ago")))))
       (is (> delta (- (tc/to-long (joda/minus (joda/now) (joda/millis 1000))) (tc/to-long (parse "1 sec ago")))))
