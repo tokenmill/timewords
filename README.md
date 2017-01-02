@@ -83,8 +83,13 @@ public static void main(String[] args) {
 ```
 Note that `timewords` depends on `org.clojure/clojure` which must be provided.
 
+# Notes
+
+Relative dates that can be understood as a time period, e.g. `last December` are rounded to the beginning of the period, e.g. 'last December' translates to `2016-12-01T00:00:00Z`.
+
+Timeword `in December` is treated as if it refers to the past, i.e. `in December` means `last December`.
+
 # TODO
 
 TODO: 
-- [ ] relative dates e.g. "next Friday", are not handled.
 - [ ] relative Lithuanian dates.
