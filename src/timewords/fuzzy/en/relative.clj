@@ -77,24 +77,28 @@
          (= "a year" cleaned-timeword) (joda/plus document-time (joda/years 1))
          :else nil)))))
 
+(defn parse-relative-weekday
+  [^String s ^DateTime document-time plus-or-minus]
+  (let [required-weekday (cond
+                           (re-find #"monday" s) 1
+                           (re-find #"tuesday" s) 2
+                           (re-find #"wednesday" s) 3
+                           (re-find #"thursday" s) 4
+                           (re-find #"friday" s) 5
+                           (re-find #"saturday" s) 6
+                           (re-find #"sunday" s) 7)]
+    (joda/with-time-at-start-of-day
+      (if (= required-weekday (joda/day-of-week document-time))
+        (joda/minus document-time (joda/days 7))
+        (loop [datetime document-time]
+          (if (= required-weekday (joda/day-of-week datetime))
+            datetime
+            (recur (joda/minus datetime (joda/days 1)))))))))
+
 (defn parse-last-weekday
   ([^String s] (parse-last-weekday s (joda/now)))
   ([^String s ^DateTime document-time]
-   (let [required-weekday (cond
-                            (re-find #"monday" s) 1
-                            (re-find #"tuesday" s) 2
-                            (re-find #"wednesday" s) 3
-                            (re-find #"thursday" s) 4
-                            (re-find #"friday" s) 5
-                            (re-find #"saturday" s) 6
-                            (re-find #"sunday" s) 7)]
-     (joda/with-time-at-start-of-day
-       (if (= required-weekday (joda/day-of-week document-time))
-         (joda/minus document-time (joda/days 7))
-         (loop [datetime document-time]
-           (if (= required-weekday (joda/day-of-week datetime))
-             datetime
-             (recur (joda/minus datetime (joda/days 1))))))))))
+   (parse-relative-weekday s document-time joda/minus)))
 
 (defn parse-next-weekday
   ([^String s] (parse-next-weekday s (joda/now)))
