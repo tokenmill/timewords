@@ -1,10 +1,10 @@
 (ns timewords.standard.standard
   (:require [clojure.string :as s]
-            [clj-time.core :as t]
             [clj-time.coerce :refer [from-date]]
-            [timewords.standard.formats :as formats]
+            [timewords.standard.joda-formats :as formats]
             [timewords.standard.utils :as utils])
-  (:import (org.joda.time DateTime)))
+  (:import (org.joda.time DateTime)
+           (java.util Locale)))
 
 (def date-part-normalizations
   {#"(?i)p\.m\." "PM"
@@ -24,14 +24,14 @@
       s/trim
       (s/replace #"\s+" " ")))
 
-(defn multi-format-parse [^String date]
-  (->> date
-       (formats/parse)
-       (map from-date)
-       ; for cases where multiple patterns match
-       (sort)
-       (reverse)
-       (first)))
+(defn multi-format-parse [^String date ^String language ^DateTime document-time]
+  (let [locale (Locale/forLanguageTag language)]
+    (->> (formats/parse date locale document-time)
+         (map from-date)
+         ; for cases where multiple patterns match
+         (sort)
+         (reverse)
+         (first))))
 
 (defn to-date
   [^String date & [^String language ^DateTime document-time]]
@@ -40,4 +40,4 @@
         utils/clean
         clean-date-string
         normalize-date-parts
-        multi-format-parse)))
+        (multi-format-parse language document-time))))
