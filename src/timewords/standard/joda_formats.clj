@@ -2,15 +2,19 @@
   (:require [clojure.string :as str])
   (:import (java.util Locale TimeZone Date)
            (org.joda.time.format ISODateTimeFormat DateTimeFormat DateTimeFormatter)
-           (org.joda.time DateTime LocalDateTime)))
+           (org.joda.time DateTime LocalDateTime)
+           (org.joda.time.chrono LenientChronology ISOChronology)))
 
 (def lt-locale (Locale/forLanguageTag "lt"))
 (def en-locale Locale/ENGLISH)
 
-(defn fmt [pattern & [locale default-year]]
+(def lenient-chronology (LenientChronology/getInstance (ISOChronology/getInstance)))
+
+(defn fmt [pattern & [locale default-year lenient]]
   (cond-> (DateTimeFormat/forPattern pattern)
           locale (.withLocale locale)
-          default-year (.withDefaultYear default-year)))
+          default-year (.withDefaultYear default-year)
+          lenient (.withChronology lenient-chronology)))
 
 (defn lt-formatters []
   [(ISODateTimeFormat/dateTimeParser)
@@ -24,7 +28,28 @@
    (fmt "yyyy MMMM dd HH:mm:ss" lt-locale)
    (fmt "yyyy 'm.' MMMM dd 'd.' HH:mm" lt-locale)])
 
-(defn en-formatters [] [(ISODateTimeFormat/dateTimeParser)])
+(defn en-formatters []
+  [(ISODateTimeFormat/dateTimeParser)
+   (fmt "yyyy-MM-dd HH:mm")
+   (fmt "yyyy-MM-dd HH:mm:ss")
+   (fmt "yyyy-MM-dd, HH:mm")
+   (fmt "dd/MM/yy HH:mm")
+   (fmt "yyyy/MM/dd")
+   (fmt "dd/MM/yyyy, HH:mm")
+   (fmt "dd/MM/yyyy")
+   (fmt "MMMM yyyy")
+   (fmt "dd'st' MMMM yyyy")
+   (fmt "dd'nd' MMMM yyyy")
+   (fmt "dd'rd' MMMM yyyy")
+   (fmt "dd'th' MMMM yyyy")
+   (fmt "EEEE, dd'st' MMMM yyyy")
+   (fmt "EEEE, dd'nd' MMMM yyyy")
+   (fmt "EEEE, dd'rd' MMMM yyyy")
+   (fmt "EEEE, dd'th' MMMM yyyy")
+   (fmt "EEEE MMMM dd, yyyy")
+   (fmt "EEEE MMMM dd, yyyy h:mma" en-locale)
+   (fmt "EEEE MMMM dd, yyyy h:mma z" en-locale)
+   ])
 
 (def by-locale
   {en-locale (en-formatters)
@@ -45,7 +70,11 @@
       (str/replace "rugsėjo" "rugsėjis")
       (str/replace "spalio" "spalis")
       (str/replace "lapkričio" "lapkritis")
-      (str/replace "gruodžio" "gruodis")))
+      (str/replace "gruodžio" "gruodis")
+      (str/replace "pst" "PST")
+      (str/replace "edt" "EDT")
+      (str/replace " bst" " BST")
+      ))
 
 (defn parse
   ([^String text]
