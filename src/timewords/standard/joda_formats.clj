@@ -17,6 +17,7 @@
    (fmt "MMMM dd" lt-locale (.getYear (DateTime.)))
    (fmt "MMMM dd 'd.' HH:mm" lt-locale (.getYear (DateTime.)))
    (fmt "yyyy/MM/dd HH:mm" lt-locale)
+   (fmt "yyyy MM dd HH:mm" lt-locale)
    (fmt "yyyy MMMM dd" lt-locale)
    (fmt "yyyy 'metų' MMMM dd" lt-locale)
    (fmt "yyyy MMMM dd HH:mm" lt-locale)
