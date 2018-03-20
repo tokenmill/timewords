@@ -57,9 +57,10 @@
      (for [^DateTimeFormatter formatter formatters
            :let [parsed (try
                           (let [^LocalDateTime pdate (.parseLocalDateTime formatter text)]
-                            (when (and (not (nil? document-time))
-                                       (not= (.getYear document-time) (.getYear (DateTime.))))
-                              #_(.setYear pdate (.getYear document-time)))
-                            (.toDate pdate (TimeZone/getTimeZone "GMT")))
+                            (.toDate (if (and (not (nil? document-time))
+                                              (not= (.getYear document-time) (.getYear (DateTime.))))
+                                       (.minusYears pdate (- (.getYear pdate) (.getYear document-time)))
+                                       pdate)
+                                     (TimeZone/getTimeZone "GMT")))
                           (catch Exception _ nil))]
            :when parsed] parsed))))
