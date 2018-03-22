@@ -30,7 +30,7 @@
         (jco/to-date
           (or
             (standard/to-date date-string language document-time)
-            #_(fuzzy/to-date date-string language document-time)))))
+            (fuzzy/to-date date-string language document-time)))))
     (catch Exception e
       (prn (str "Caught exception: '" (.getMessage e) "', while parsing timeword '" date-string
                 "' with language '" language "' and with document-time '" document-time "'."))
