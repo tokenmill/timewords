@@ -26,7 +26,10 @@
    (fmt "yyyy 'metų' MMMM dd" lt-locale)
    (fmt "yyyy MMMM dd HH:mm" lt-locale)
    (fmt "yyyy MMMM dd HH:mm:ss" lt-locale)
-   (fmt "yyyy 'm.' MMMM dd 'd.' HH:mm" lt-locale)])
+   (fmt "yyyy 'm.' MMMM dd 'd.' HH:mm" lt-locale)
+   (fmt "yyyy MMMM dd'd.' HH:mm" lt-locale)
+   (fmt "yyyy-MM-dd '/' HH:mm" lt-locale)
+   (fmt "HH:mm yyyy.MM.dd" lt-locale)])
 
 (defn en-formatters []
   [(ISODateTimeFormat/dateTimeParser)
@@ -70,7 +73,8 @@
    (fmt "MMMM dd, yyyy, h:mm a")
    (fmt "MMMM dd, yyyy - h:mma")
    (fmt "EEE, MMMM dd, yyyy, h:mm a")
-   (fmt "EEEE dd MMMM yyyy HH.mm z")])
+   (fmt "EEEE dd MMMM yyyy HH.mm z")
+   (fmt "yyyy-MM-dd '/' HH:mm")])
 
 (def by-locale
   {en-locale (en-formatters)
