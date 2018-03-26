@@ -37,4 +37,8 @@
     (is (= (date 2018 3 22 16 1) (parse "16:01 2018.03.22" nil "lt")))
     (is (= (date 2018 3 20 18 57) (parse "2018 kovo 20d. 18:57" nil "lt")))
     (is (= (date 2018 3 12 14 4) (parse "Pirmadienis, 12 Kovas 2018 14:04" nil "lt")))
+    (is (= (date 2018 3 26) (parse "2018 kovo 26" nil "lt")))
+    (is (= (date 2018 3 24 10 9) (parse "2018 kovo 24 d. 10:09" nil "lt")))
+    (is (= (date 2018 3 25 12) (parse "2018.03.25 12:00" nil "lt")))
+    (is (= (date 2018 3 26) (parse "Kov 26, 2018" nil "lt")))
     ))

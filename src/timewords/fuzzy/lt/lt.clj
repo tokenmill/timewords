@@ -8,7 +8,10 @@
 (defn relative-date?
   "No relative date support."
   [s]
-  false)
+  (if (or (not (re-find #"\d" s))
+          (re-find #"prieš" s))
+    true
+    false))
 
 (defn parse-date [^String s & [^DateTime document-time]]
   (let [document-time (or document-time (joda/now))

@@ -99,6 +99,7 @@
     (is (= (date 2015 11 17 0 10) (parse "17 Nov 2015 00:10")))
     (is (= (date 2015 11 17 16 1 37) (parse "2015-11-17T16:01:37+0000")))
     (is (= (date 2016 2 24 0 1) (parse "Wed Feb 24 2016 00:01 UTC+1201")))
+    (is (= (date 2018 3 25 12) (parse "2018.03.25 12:00")))
 
     ; nonsenses should return nil
     (is (= nil (parse "makes no sense")))
