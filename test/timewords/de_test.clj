@@ -7,7 +7,7 @@
 
 (defn date [& xs] (.toDate (apply date-time xs)))
 
-(deftest lt-dates-test
+(deftest de-dates-test
   (testing "German month names"
     (is (= (date 2018 1 28 16 1) (parse "28. Januar 2018, 16:01 Uhr" nil "de")))
     (is (= (date 2018 2 28 16 1) (parse "28. Februar 2018, 16:01 Uhr" nil "de")))
