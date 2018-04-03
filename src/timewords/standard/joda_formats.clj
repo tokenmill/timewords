@@ -79,16 +79,15 @@
    (fmt "yyyy-MM-dd '/' HH:mm" locale)
    (fmt "yyyy.MM.dd HH:mm" locale)
    (fmt "HH:mm yyyy.MM.dd" locale)
-   (fmt "MMMM dd, yyyy" locale)
    (fmt "dd.MM.yyyy - HH:mm'h'" locale)
    (fmt "dd.MM.yyyy – HH:mm 'H.'" locale)
    (fmt "yyyy-MM-dd HH:mm:ss 'H'" locale)
    (fmt "dd/MM/yyyy HH:mm 'h'" locale)
    (fmt "dd/MM/yyyy - HH:mm" locale)
    (fmt "dd MMMM yyyy - HH:mm 'CEST'" locale)
-   (fmt "dd MMMM'.' yyyy - HH:mm" locale)
+   (fmt "dd MMMM yyyy - HH:mm" locale)
    (fmt "dd MMMM yyyy HH:mm'h' 'CEST'" locale)
-   (fmt "dd MMMM. yyyy HH:mm" locale)
+   (fmt "dd MMMM'.' yyyy HH:mm" locale)
    (fmt "dd/MM/yyyy HH:mm'h'" locale)
    (fmt "dd/MM/yyyy HH:mm:ss 'CET'" locale)
    (fmt "dd/MM/yyyy HH:mm:ss" locale)
@@ -102,7 +101,7 @@
 (defn normalize [text]
   (-> text
       (str/lower-case)
-      (str/replace "kovo" "kovas")
+      (str/replace "kov " "kovo ")
       (str/replace "vasario" "vasaris")
       (str/replace "balandžio" "balandis")
       (str/replace "gegužės" "gegužė")
@@ -118,7 +117,9 @@
       (str/replace " gmt" " GMT")
       (str/replace "p.m." "pm")
       (str/replace "utc" "UTC")
-      (str/replace "est" "EST")))
+      (str/replace "est" "EST")
+      (str/replace "mar." "marzo")
+      (str/replace " mar " " marzo ")))
 
 (def used-locales (atom {}))
 

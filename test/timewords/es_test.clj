@@ -29,4 +29,5 @@
     (is (= (date 2018 3 29) (parse "Jueves, 29/03/2018" nil "es")))
     (is (= (date 2018 3 29) (parse "jueves 29 marzo 2018" nil "es")))
     (is (= (date 2018 3 28 15 42) (parse "28 de marzo de 2018. 15:42h" nil "es")))
-    (is (= (date 2018 3 28) (parse "28 de marzo de 2018" nil "es")))))
+    (is (= (date 2018 3 28) (parse "28 de marzo de 2018" nil "es")))
+    ))

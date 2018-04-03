@@ -13,6 +13,7 @@
     (is (= (date 2000 1 3) (parse "2000 sausio 3" nil "lt")))
     (is (= (date 2000 2 3) (parse "2000 vasario 3" nil "lt")))
     (is (= (date 2000 3 3) (parse "2000 kovo 3" nil "lt")))
+    (is (= (date 2000 3 3) (parse "2000 kovas 3" nil "lt")))
     (is (= (date 2000 4 3) (parse "2000 balandžio 3" nil "lt")))
     (is (= (date 2000 5 3) (parse "2000 gegužės 3" nil "lt")))
     (is (= (date 2000 6 3) (parse "2000 birželis 3" nil "lt")))
