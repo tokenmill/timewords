@@ -45,6 +45,7 @@
    (fmt "MMMM dd, yyyy h:mma" locale)
    (fmt "EEE, MMMM dd, yyyy" locale)
    (fmt "yyyy-MM-dd'T'HH:mm:ssZ" locale)
+   (fmt "yyyy-MM-dd'T'HH:mm:ss" locale)
    (fmt "MMMM dd, yyyy h:mm a" locale)
    (fmt "MMMM dd, yyyy" locale)
    (fmt "MMMM. dd, yyyy" locale)
@@ -101,8 +102,7 @@
    (fmt "EEEE dd MMMM yyyy" locale)
    (fmt "dd 'de' MMMM 'de' yyyy'.' HH:mm'h'" locale)
    (fmt "dd 'de' MMMM 'de' yyyy" locale)
-   (fmt "yyyy-MM-dd HH:mm:ss Z")
-   (fmt "yyyy-MM-dd HH:mm:ss")])
+   (fmt "yyyy-MM-dd HH:mm:ss Z")])
 
 (defn normalize [text]
   (-> text
