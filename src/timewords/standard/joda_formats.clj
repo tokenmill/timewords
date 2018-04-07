@@ -15,6 +15,7 @@
 
 (defn common-formatters [locale]
   [(ISODateTimeFormat/dateTimeParser)
+   (fmt "MMddyyyy" locale)
    (fmt "yy-MM-dd" locale)
    (fmt "MMM dd HH:mm yyyy" locale)
    (fmt "yyyy-MM-dd HH:mm" locale)
@@ -99,7 +100,9 @@
    (fmt "EEEE, dd/MM/yyyy" locale)
    (fmt "EEEE dd MMMM yyyy" locale)
    (fmt "dd 'de' MMMM 'de' yyyy'.' HH:mm'h'" locale)
-   (fmt "dd 'de' MMMM 'de' yyyy" locale)])
+   (fmt "dd 'de' MMMM 'de' yyyy" locale)
+   (fmt "yyyy-MM-dd HH:mm:ss Z")
+   (fmt "yyyy-MM-dd HH:mm:ss")])
 
 (defn normalize [text]
   (-> text
@@ -147,6 +150,8 @@
      (for [^DateTimeFormatter formatter formatters
            :let [parsed (try
                           (let [^LocalDateTime pdate (.parseLocalDateTime formatter text)]
+                            (when (< 10000 (.getYear pdate))
+                              (throw (Exception.)))
                             (.toDate (if (and (not (nil? document-time))
                                               (not= (.getYear document-time) (.getYear (DateTime.))))
                                        (.minusYears pdate (- (.getYear pdate) (.getYear document-time)))
