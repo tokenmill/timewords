@@ -6,6 +6,7 @@
 (deftest lt-relative-timewords
   (testing "today variations"
     ;(is (= nil (parse "šiandien 13:16" (Date.) "lt")))
+    ; šiandien 04:47
     ;(is (= nil (parse "prieš 1 d." (Date.) "lt")))
     ; 1 val prieš
     ; 7 val prieš
