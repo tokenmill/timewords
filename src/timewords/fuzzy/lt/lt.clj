@@ -5,9 +5,7 @@
             [timewords.fuzzy.lt.utils :refer [clean]])
   (:import (org.joda.time DateTime)))
 
-(defn relative-date?
-  "No relative date support."
-  [s]
+(defn relative-date? [s]
   (if (or (not (re-find #"\d" s))
           (re-find #"prieš" s))
     true
