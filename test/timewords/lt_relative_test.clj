@@ -12,6 +12,7 @@
     (let [document-time (date 2018 4 7 12 3)]
       (is (= (date 2018 4 6) (parse "prieš 1 d." document-time "lt")))
       (is (= (date 2018 4 6) (parse "prieš 1 d" document-time "lt")))
+      (is (= (date 2018 4 5) (parse "prieš 2 d. " document-time "lt")))
       (is (= (date 2018 3 28) (parse "prieš 10 d." document-time "lt"))))
     (let [document-time (date 2018 4 7 12 3)]
       (is (= (date 2018 4 7 13 16) (parse "šiandien 13:16" document-time "lt")))
