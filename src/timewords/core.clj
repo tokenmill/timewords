@@ -24,7 +24,8 @@
       (throw (Exception. "document-time is not either nil or java.util.Date.")))
     (when-not (or (nil? language) (string? language))
       (throw (Exception. "language parameter is not either nil or java.lang.String.")))
-    (let [^String language (or language "en")
+    (let [date-string (.replaceAll date-string "[\\u00A0\\u202F\\uFEFF\\u2007\\u180E]" " ")
+          ^String language (or language "en")
           ^DateTime document-time (or (DateTime. document-time) (joda/now))]
       (when (not (s/blank? date-string))
         (jco/to-date
