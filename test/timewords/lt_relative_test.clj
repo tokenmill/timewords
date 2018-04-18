@@ -17,7 +17,8 @@
     (let [document-time (date 2018 4 7 12 3)]
       (is (= (date 2018 4 7 13 16) (parse "šiandien 13:16" document-time "lt")))
       (is (= (date 2018 4 7 4 47) (parse "šiandien 04:47" document-time "lt")))
-      (is (= (date 2018 4 7 22 00) (parse "šiandien 22:00" document-time "lt"))))
+      (is (= (date 2018 4 7 22 00) (parse "šiandien 22:00" document-time "lt")))
+      (is (= (date 2018 4 6 22 00) (parse "vakar 22:00" document-time "lt"))))
     (let [document-time (date 2018 4 7 12 3)]
       (is (= (date 2018 4 6) (parse "1 d. prieš" document-time "lt")))
       (is (= (date 2018 4 6) (parse "1 d prieš" document-time "lt")))

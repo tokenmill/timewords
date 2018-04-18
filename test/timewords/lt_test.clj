@@ -11,12 +11,18 @@
 
   (testing "lithuanian month names"
     (is (= (date 2000 1 3) (parse "2000 sausio 3" nil "lt")))
+    (is (= (date 2000 1 3) (parse "2000 sausio 3 d." nil "lt")))
+    (is (= (date 2000 1 3) (parse "2000 sausio 3d." nil "lt")))
+    (is (= (date 2000 1 3 12 34) (parse "2000 sausio 3 d. 12:34" nil "lt")))
+    (is (= (date 2000 1 3 12 34) (parse "2000 sausio 3d. 12:34" nil "lt")))
+    (is (= (date 2000 1 30 12 34) (parse "2000 sausio 30d. 12:34" nil "lt")))
     (is (= (date 2000 2 3) (parse "2000 vasario 3" nil "lt")))
     (is (= (date 2000 3 3) (parse "2000 kovo 3" nil "lt")))
     (is (= (date 2000 3 3) (parse "2000 kovas 3" nil "lt")))
     (is (= (date 2000 4 3) (parse "2000 balandžio 3" nil "lt")))
     (is (= (date 2000 5 3) (parse "2000 gegužės 3" nil "lt")))
     (is (= (date 2000 6 3) (parse "2000 birželis 3" nil "lt")))
+    (is (= (date 2000 6 3) (parse "2000 birželio 3" nil "lt")))
     (is (= (date 2000 7 3) (parse "2000 liepos 3" nil "lt")))
     (is (= (date 2000 8 3) (parse "2000 rugpjūčio 3" nil "lt")))
     (is (= (date 2000 9 3) (parse "2000 rugsėjo 3" nil "lt")))

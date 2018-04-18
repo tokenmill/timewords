@@ -8,6 +8,7 @@
 (defn relative-date? [s]
   (if (or (not (re-find #"\d" s))
           (re-find #"prieš" s)
+          (re-find #"vakar" s)
           (re-find #"šiandien" s))
     true
     false))
