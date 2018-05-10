@@ -16,6 +16,7 @@
 (defn common-formatters [locale]
   [(ISODateTimeFormat/dateTimeParser)
    (fmt "MMddyyyy" locale)
+   (fmt "yyyyMMdd'T'HH:mm:ss'Z'" locale)
    (fmt "yy-MM-dd" locale)
    (fmt "MMM dd HH:mm yyyy" locale)
    (fmt "yyyy-MM-dd HH:mm" locale)
