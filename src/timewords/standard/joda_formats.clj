@@ -125,6 +125,10 @@
    (fmt "dd 'de' MMMM 'de' yyyy" locale)
    (fmt "yyyy-MM-dd HH:mm:ss Z" locale)
    (fmt "HH:mm, dd MMMM yyyy" locale)
+   (fmt "MM/dd/yyyy hh:mm:ss a" locale)
+   (fmt "hh : mm a - dd/MM/yyyy" locale)
+   (fmt "MM/dd/yyyy hh:mm a" locale)
+   (fmt "HH:mm MMMM dd, yyyy" locale)
    (fmt "dd MMMM HH:mm" locale (.getYear (DateTime.)))
    (fmt "dd MMMM, HH:mm" locale (.getYear (DateTime.)))])
 
