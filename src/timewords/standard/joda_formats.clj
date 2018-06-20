@@ -178,14 +178,33 @@
       (str/replace "ноябрь" "ноября")
       (str/replace "декабрь" "декабря")))
 
+(defn special-cases [text locale document-time]
+  (let [document-time (or document-time (DateTime.))
+        fmts [(fmt "hh:mm a z")
+              (fmt "hh:mm a")
+              (fmt "hh:mma z")
+              (fmt "hh:mma")
+              (fmt "HH:mm z")
+              (fmt "HH:mm")]]
+    (first
+      (for [^DateTimeFormatter formatter fmts
+            :let [parsed (try
+                           (.toDate (-> (.parseLocalDateTime formatter text)
+                                        (.withYear (.getYear document-time))
+                                        (.withMonthOfYear (.getMonthOfYear document-time))
+                                        (.withDayOfMonth (.getDayOfMonth document-time)))
+                                    (TimeZone/getTimeZone "GMT"))
+                           (catch Exception _ nil))]
+            :when parsed] parsed))))
+
 (def used-locales (atom {}))
 
-(defn get-formatters [locale]
+(defn formatters [locale]
   (if-let [used-formatters (get @used-locales locale)]
     used-formatters
-    (let [new-formatters (common-formatters locale)]
-      (swap! used-locales assoc locale new-formatters)
-      new-formatters)))
+    (let [locale-formatters (common-formatters locale)]
+      (swap! used-locales assoc locale locale-formatters)
+      locale-formatters)))
 
 (defn parse
   ([^String text]
@@ -194,16 +213,19 @@
    (parse text locale nil))
   ([^String text ^Locale locale ^DateTime document-time]
    (let [text (normalize text)
-         formatters (get-formatters locale)]
-     (for [^DateTimeFormatter formatter formatters
-           :let [parsed (try
-                          (let [^LocalDateTime pdate (.parseLocalDateTime formatter text)]
-                            (when (< 10000 (.getYear pdate))
-                              (throw (Exception.)))
-                            (.toDate (if (and (not (nil? document-time))
-                                              (not= (.getYear document-time) (.getYear (DateTime.))))
-                                       (.minusYears pdate (- (.getYear pdate) (.getYear document-time)))
-                                       pdate)
-                                     (TimeZone/getTimeZone "GMT")))
-                          (catch Exception _ nil))]
-           :when parsed] parsed))))
+         locale-formatters (formatters locale)
+         parsed-dates (for [^DateTimeFormatter formatter locale-formatters
+                            :let [parsed (try
+                                           (let [^LocalDateTime pdate (.parseLocalDateTime formatter text)]
+                                             (when (< 10000 (.getYear pdate))
+                                               (throw (Exception.)))
+                                             (.toDate (if (and (not (nil? document-time))
+                                                               (not= (.getYear document-time) (.getYear (DateTime.))))
+                                                        (.minusYears pdate (- (.getYear pdate) (.getYear document-time)))
+                                                        pdate)
+                                                      (TimeZone/getTimeZone "GMT")))
+                                           (catch Exception _ nil))]
+                            :when parsed] parsed)]
+     (if (empty? parsed-dates)
+       (conj parsed-dates (special-cases text locale document-time))
+       parsed-dates))))
