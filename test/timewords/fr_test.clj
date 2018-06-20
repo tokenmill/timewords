@@ -28,11 +28,4 @@
     (is (= (date 2018 5 9 13 07) (parse "09 mai 2018, 13h07" nil "fr")))
     (is (= (date 2018 5 8 22 29) (parse "Le 08/05 à 22:29" nil "fr")))
     (is (= (date 2018 5 9 15 33) (parse "9 mai 2018 à 15:33" nil "fr")))
-    (is (= (date 2018 5 9 12 43) (parse "09 Mai 2018 : 12h43" nil "fr")))
-    ;; the parser flips places of day and month
-    ;(is (= (date 2018 5 9 7 3) (parse "09/05/2018 à 07:03" nil "fr")))
-    ;(is (= (date 2018 5 8) (parse "le 08/05/2018" nil "fr")))
-    ;(is (= (date 2018 5 9 14 22) (parse "le 09/05/2018 à 14:22" nil "fr")))
-    ;(is (= (date 2018 5 9 7 45) (parse "09/05/2018 à 07:45" nil "fr")))
-    ;(is (= (date 2018 5 7 16 11) (parse "07/05/2018 | 16:11" nil, "fr")))
-    ))
+    (is (= (date 2018 5 9 12 43) (parse "09 Mai 2018 : 12h43" nil "fr")))))

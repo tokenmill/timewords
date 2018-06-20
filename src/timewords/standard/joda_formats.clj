@@ -71,6 +71,7 @@
    (fmt "EEEE, dd.MM.yyyy, HH:mm" locale)
    (fmt "EEEE, dd.MM.yyyy" locale)
    (fmt "HH:mm dd.MM.yyyy" locale)
+   (fmt "HH:mm dd MMMM yyyy" locale)
    (fmt "dd.MM.yyyy" locale)
    (fmt "MMMM dd" locale (.getYear (DateTime.)))
    (fmt "MMMM dd 'd.' HH:mm" locale (.getYear (DateTime.)))
