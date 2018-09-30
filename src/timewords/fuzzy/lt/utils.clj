@@ -6,4 +6,5 @@
   [^String d]
   (-> d
       (s/replace #"(Autorius|Publikuota):" "")
-      (s/replace #", atnaujinta 20.*" "")))
+      (s/replace #", atnaujinta 20.*" "")
+      (s/trim)))

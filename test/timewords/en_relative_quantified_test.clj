@@ -4,8 +4,7 @@
             [clj-time.coerce :as tc]
             [timewords.core :refer :all]))
 
-
-(deftest timewords.en-relative-quantified
+(deftest en-relative-quantified
   (testing "some time ago"
     (let [parsed-datetime (tc/to-date-time (parse "now" (tc/to-date (joda/now))))]
       (is (joda/after? parsed-datetime (joda/minus (joda/now) (joda/millis 1000))))
@@ -89,6 +88,11 @@
       (is (= 0 (joda/milli parsed-datetime))))
     (let [parsed-datetime (tc/to-date-time (parse "2 hours ago"))]
       (is (joda/after? parsed-datetime (joda/minus (joda/now) (joda/hours 3))))
+      (is (joda/before? parsed-datetime (joda/minus (joda/now) (joda/hours 1))))
+      (is (= 0 (joda/minute parsed-datetime)))
+      (is (= 0 (joda/milli parsed-datetime))))
+    (let [parsed-datetime (tc/to-date-time (parse "3 hrs ago"))]
+      (is (joda/after? parsed-datetime (joda/minus (joda/now) (joda/hours 4))))
       (is (joda/before? parsed-datetime (joda/minus (joda/now) (joda/hours 1))))
       (is (= 0 (joda/minute parsed-datetime)))
       (is (= 0 (joda/milli parsed-datetime))))

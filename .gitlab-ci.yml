@@ -1,0 +1,11 @@
+stages:
+  - test
+  - deploy
+
+run-unit-tests:
+  stage: test
+  image: clojure:alpine
+  when: always
+  script:
+    - lein do clean, test
+    
