@@ -59,7 +59,7 @@
     (cond
       (re-find #"\d+s$|sec|secs|second|seconds" cleaned-timeword) (-> (plus-or-minus document-time (joda/millis (* amount 1000))) (floor get-seconds))
       (re-find #"\d+m$|min|mins|minute|minutes" cleaned-timeword) (-> (plus-or-minus document-time (joda/minutes amount)) (floor joda/minute))
-      (re-find #"\d+h$|hour|hours" cleaned-timeword) (-> (plus-or-minus document-time (joda/hours amount)) (floor joda/hour))
+      (re-find #"\d+h$|hour|hr|hours|hrs" cleaned-timeword) (-> (plus-or-minus document-time (joda/hours amount)) (floor joda/hour))
       (re-find #"\d+d$|day|days" cleaned-timeword) (-> (plus-or-minus document-time (joda/days amount)) (floor joda/day))
       (re-find #"\d+w$|week|weeks" cleaned-timeword) (-> (plus-or-minus document-time (joda/days (* 7 amount))) (floor joda/day))
       (re-find #"month|months" cleaned-timeword) (-> (plus-or-minus document-time (joda/months amount)) (floor joda/month))

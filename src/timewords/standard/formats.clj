@@ -1,92 +1,254 @@
 (ns timewords.standard.formats
-  (:import (java.text SimpleDateFormat)
-           (java.util TimeZone)))
+  (:require [clojure.string :as str])
+  (:import (java.util Locale TimeZone Date)
+           (org.joda.time.format ISODateTimeFormat DateTimeFormat DateTimeFormatter)
+           (org.joda.time DateTime LocalDateTime)
+           (org.joda.time.chrono LenientChronology ISOChronology)))
 
-(defn- pattern->formatter [pattern-def]
-  (let [pattern (if (string? pattern-def) pattern-def (first pattern-def))
-        lenient (if (string? pattern-def) false (second pattern-def))]
-    (doto (SimpleDateFormat. pattern)
-      (.setTimeZone (TimeZone/getTimeZone "GMT"))
-      (.setLenient lenient))))
+(def lenient-chronology (LenientChronology/getInstance (ISOChronology/getInstance)))
 
-(def supported-patterns
-  ["yyyy-MM-dd'T'HH:mm:ss.sssssssZ"
-   "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
-   "yyyy-MM-dd'T'HH:mm:ss.SSS"
-   "yyyy-MM-dd'T'HH:mm-ss:SS"
-   "yyyy-MM-dd'T'HH:mm:ssX"
-   "yyyy-MM-dd'T'HH:mm:ssZZ"
-   "yyyy-MM-dd'T'HH:mm:ss'Z'"
-   "yyyy-MM-dd'T'HH:mm:ss"
-   "yyyy-MM-dd'T'HH:mmZ"
-   "yyyy-MM-dd'T'HH:mmz"
-   "yyyy-MM-dd'T'HH:mm"
-   "yyyy-MM-dd HH:mm:ss ZZZ"
-   "yyyy-MM-dd HH:mm:ss.S"
-   "yyyy-MM-dd HH:mm:ss"
-   "yyyy-MM-dd HH:mm"
-   "yyyy-MM-dd, HH:mm"
-   "yyyy-MM-dd"
-   "MMMM dd, yyyy - h:mm a z"
-   "MMMM dd, yyyy - h:mma"
-   "MMMM dd, yyyy, hh:mm:ss a z"
-   "MMMM dd, yyyy, hh:mm a"
-   "MMMM dd, yyyy hh:mm:ss a z"
-   "MMMM dd, yyyy hh:mm a z"
-   "MMMM dd, yyyy HH:mm z"
-   "MMMM dd, yyyy hh:mm a"
-   "MMMM dd, yyyy h:mma"
-   "MMMM dd, yyyy"
-   "MMMM dd yyyy"
-   "EEEE, MMMM d, yyyy h:mma z"
-   "EEEE, MMMM d, yyyy, h:mm a"
-   "EEEE, dd MMMM yyyy HH:mm:ss Z"
-   "EEEE MMMM dd HH:mm:ss z yyyy"
-   ["EEEE MMMM dd yy HH:mm z" true]
-   "EEEE MMMM dd yyyy HH:mm 'UTC'Z"
-   "EEEE MMMM dd, yyyy h:mma z"
-   "EEEE dd MMMM yyyy - h:mma"
-   "EEEE dd MMMM yyyy h:mma z"
-   "EEEE dd MMMM yyyy HH.mm z"
-   "EEEE dd MMMM yyyy HH:mm"
-   "EEEE dd MMMM yyyy"
-   "yyyyMMdd'T'HHmmss.SSSZ"
-   "yyyyMMdd'T'HHmmssZ"
-   "yyyyMMddHH"
-   "yyyyMMdd"
-   "yyyy/MM/dd hh:mm:ss a"
-   "yyyy/MM/dd HH:mm:ss"
-   "yyyy/MM/dd"
-   "yyyy/MMM/dd"
-   "yyyy/MMdd"
-   "dd.MM.yyyy"
-   "dd MMMM, yyyy, HH:mm"
-   "dd'th' MMMM yyyy"
-   "dd'st' MMMM yyyy"
-   "dd'rd' MMMM yyyy"
-   "dd MMMM yyyy HH:mm"
-   "dd MMMM yyyy"
-   "dd-MM-yyyy"
-   "yyyy.MM.dd, HH:mm"
-   "yyyy.MM.dd HH:mm"
-   "yyyy.MM.dd"
-   "MM/dd/yyyy hh:mm:ss a ZZZ"
-   "MM/dd/yyyy hh:mm:ss a z"
-   "MM/dd/yyyy hh:mm a z"
-   "MM/dd/yyyy HH:mm"
-   ["dd/MM/yyyy, hh:mm" true]
-   "dd/MM/yy HH:mm"
-   "MM/dd/yyyy"
-   "dd/MM/yyyy"
-   "h:mm a z 'on' MMMM dd, yyyy"
-   "HH:mm MMMM dd, yyyy"])
+(defn fmt [pattern & [locale default-year lenient]]
+  (cond-> (DateTimeFormat/forPattern pattern)
+          locale (.withLocale locale)
+          default-year (.withDefaultYear default-year)
+          lenient (.withChronology lenient-chronology)))
 
-(def formatters
-  (map pattern->formatter supported-patterns))
+(defn common-formatters [locale]
+  [(ISODateTimeFormat/dateTimeParser)
+   (fmt "MMddyyyy" locale)
+   (fmt "yyyyMMdd'T'HH:mm:ss'Z'" locale)
+   (fmt "yy-MM-dd" locale)
+   (fmt "MMM dd HH:mm yyyy" locale)
+   (fmt "yyyy-MM-dd HH:mm" locale)
+   (fmt "yyyy-MM-dd HH:mm:ss" locale)
+   (fmt "yyyy-MM-dd, HH:mm" locale)
+   (fmt "yyyy/MM/dd" locale)
+   (fmt "dd/MM/yyyy, HH:mm" locale)
+   (fmt "dd/MM/yyyy" locale)
+   (fmt "MM/dd/yyyy" locale)
+   (fmt "MMMM yyyy" locale)
+   (fmt "dd'st' MMMM yyyy" locale)
+   (fmt "dd'nd' MMMM yyyy" locale)
+   (fmt "dd'rd' MMMM yyyy" locale)
+   (fmt "dd'th' MMMM yyyy" locale)
+   (fmt "EEE, dd'st' MMMM yyyy" locale)
+   (fmt "EEE, dd'nd' MMMM yyyy" locale)
+   (fmt "EEE, dd'rd' MMMM yyyy" locale)
+   (fmt "EEE, dd'th' MMMM yyyy" locale)
+   (fmt "EEE MMMM dd, yyyy" locale)
+   (fmt "EEE MMMM dd, yyyy h:mma" locale)
+   (fmt "EEE MMMM dd, yyyy h:mma z" locale)
+   (fmt "EEE MMMM dd yyyy HH:mm 'UTC'Z" locale)
+   (fmt "dd MMM yyyy HH:mm" locale)
+   (fmt "MMM dd, yyyy HH:mm z" locale)
+   (fmt "dd MMM yyyy" locale)
+   (fmt "MMMM dd, yyyy HH:mm" locale)
+   (fmt "MMMM dd, yyyy - HH:mm" locale)
+   (fmt "EEE, MMMM dd, yyyy" locale)
+   (fmt "yyyy-MM-dd'T'HH:mm:ssZ" locale)
+   (fmt "yyyy-MM-dd'T'HH:mm:ss" locale)
+   (fmt "MMMM dd, yyyy h:mm a" locale)
+   (fmt "MMMM dd, yyyy" locale)
+   (fmt "MMMM. dd, yyyy" locale)
+   (fmt "EEE MMMM dd HH:mm:ss z yyyy" locale)
+   (fmt "yyyy-MM-dd HH:mm:ss z" locale)
+   (fmt "EEE dd MMMM yyyy HH:mm" locale)
+   (fmt "yyyy/MM/dd HH:mm:ss" locale)
+   (fmt "yyyy-MM-dd HH:mm:ss.S" locale)
+   (fmt "MM/dd/yyyy HH:mm" locale)
+   (fmt "MM/dd/yyyy HH:mm:ss a z" locale)
+   (fmt "MMMM dd, yyyy, h:mm a" locale)
+   (fmt "EEE, MMMM dd, yyyy, h:mm a" locale)
+   (fmt "EEEE dd MMMM yyyy HH.mm z" locale)
+   (fmt "yyyy-MM-dd '/' HH:mm" locale)
+   (fmt "yyyy.MM.dd HH:mm" locale)
+   (fmt "HH:mm yyyy.MM.dd" locale)
+   (fmt "yyyy.MM.dd" locale)
+   (fmt "EEEE, dd. MMMM yyyy, HH:mm 'Uhr'" locale)
+   (fmt "dd. MMMM yyyy, HH:mm 'Uhr'" locale)
+   (fmt "EEEE, dd. MMMM yyyy" locale)
+   (fmt "dd. MMMM yyyy" locale)
+   (fmt "EEEE, dd.MM.yyyy, HH:mm" locale)
+   (fmt "EEEE, dd.MM.yyyy" locale)
+   (fmt "HH:mm dd.MM.yyyy" locale)
+   (fmt "HH:mm dd MMMM yyyy" locale)
+   (fmt "dd.MM.yyyy" locale)
+   (fmt "MMMM dd" locale (.getYear (DateTime.)))
+   (fmt "MMMM dd 'd.' HH:mm" locale (.getYear (DateTime.)))
+   (fmt "yyyy/MM/dd HH:mm" locale)
+   (fmt "yyyy MM dd HH:mm" locale)
+   (fmt "yyyy MMMM dd" locale)
+   (fmt "yyyy MMMM dd, EEEE" locale)
+   (fmt "yyyy MMMM dd'd.'" locale)
+   (fmt "yyyy MMMM dd 'd.'" locale)
+   (fmt "yyyy MMMM dd'd.' HH:mm" locale)
+   (fmt "yyyy MMMM dd 'd.' HH:mm" locale)
+   (fmt "yyyy 'metų' MMMM dd" locale)
+   (fmt "yyyy MMMM dd HH:mm" locale)
+   (fmt "yyyy MMMM dd HH:mm:ss" locale)
+   (fmt "yyyy 'm.' MMMM dd 'd.' HH:mm" locale)
+   (fmt "yyyy MMMM dd'd.' HH:mm" locale)
+   (fmt "yyyy MMMM dd 'd.' HH:mm" locale)
+   (fmt "yyyy MMMM 'mėn.' dd 'd.' HH:mm:ss" locale)
+   (fmt "yyyy-MM-dd '/' HH:mm" locale)
+   (fmt "yyyy.MM.dd HH:mm" locale)
+   (fmt "HH:mm yyyy.MM.dd" locale)
+   (fmt "dd.MM.yyyy - HH:mm'h'" locale)
+   (fmt "dd.MM.yyyy – HH:mm 'H.'" locale)
+   (fmt "dd.MM.yyyy, HH:mm" locale)
+   (fmt "dd.MM.yyyy в HH:mm" locale)
+   (fmt "dd.MM.yyyy HH:mm" locale)
+   (fmt "dd.MM.yyyy - HH:mm" locale)
+   (fmt "yyyy-MM-dd HH:mm:ss 'H'" locale)
+   (fmt "dd/MM/yyyy HH:mm 'h'" locale)
+   (fmt "dd/MM/yyyy - HH:mm" locale)
+   (fmt "dd/MM/yyyy HH:mm" locale)
+   (fmt "dd MMMM yyyy - HH:mm 'CEST'" locale)
+   (fmt "dd MMMM yyyy - HH:mm" locale)
+   (fmt "dd MMMM yyyy 'г.,' HH:mm" locale)
+   (fmt "dd MMMM yyyy HH:mm'h' 'CEST'" locale)
+   (fmt "dd MMMM'.' yyyy HH:mm" locale)
+   (fmt "dd MMMM, yyyy" locale)
+   (fmt "dd/MM/yyyy HH:mm'h'" locale)
+   (fmt "dd/MM/yyyy HH:mm:ss 'CET'" locale)
+   (fmt "dd/MM/yyyy HH:mm:ss" locale)
+   (fmt "HH:mm - dd/MM/yy" locale)
+   (fmt "dd/MM/yy" locale)
+   (fmt "dd/MM/yy HH:mm" locale)
+   (fmt "dd/MM HH:mm" locale (.getYear (DateTime.)))
+   (fmt "EEEE, dd MMMM yyyy, HH:mm" locale)
+   (fmt "EEEE, dd MMMM yyyy HH:mm" locale)
+   (fmt "dd MMMM yyyy, HH:mm" locale)
+   (fmt "dd MMMM yyyy : HH:mm" locale)
+   (fmt "EEEE, dd/MM/yyyy" locale)
+   (fmt "HH:mm dd/MM/yyyy" locale)
+   (fmt "EEEE dd MMMM yyyy" locale)
+   (fmt "dd 'de' MMMM 'de' yyyy'.' HH:mm'h'" locale)
+   (fmt "dd 'de' MMMM 'de' yyyy" locale)
+   (fmt "yyyy-MM-dd HH:mm:ss Z" locale)
+   (fmt "HH:mm, dd MMMM yyyy" locale)
+   (fmt "MM/dd/yyyy hh:mm:ss a" locale)
+   (fmt "hh : mm a - dd/MM/yyyy" locale)
+   (fmt "MM/dd/yyyy hh:mm a" locale)
+   (fmt "HH:mm MMMM dd, yyyy" locale)
+   (fmt "dd MMMM HH:mm" locale (.getYear (DateTime.)))
+   (fmt "dd MMMM, HH:mm" locale (.getYear (DateTime.)))])
 
-(defn parse [^String text]
-  (for [formatter formatters
-        :let [parsed (try
-                       (.parse formatter text)
-                       (catch Exception _ nil))]
-        :when parsed] parsed))
+(defn ninth-or-newer-jdk? []
+  (not (re-matches #"1\..*" (System/getProperty "java.version"))))
+
+(def normalize-lt
+  (if (ninth-or-newer-jdk?)
+    (fn [text]
+      (-> text
+          (str/replace #"sau " "sausio ")
+          (str/replace #"(^vas |vasario )" "vasario ")
+          (str/replace #"(kov |kovo )" "kovo ")
+          (str/replace #"(bal |balandžio )" "balandžio ")
+          (str/replace #"(geg |gegužės )" "gegužės ")
+          (str/replace #"(bir |birželio )" "birželio ")
+          (str/replace #"(lie |liepos )" "liepos ")
+          (str/replace #"(rgp |rugpjūčio )" "rugpjūčio ")
+          (str/replace #"(rgs |rugsėjo )" "rugsėjo ")
+          (str/replace #"(spa |spalio )" "spalio ")
+          (str/replace #"(lap |lapkričio )" "lapkričio ")
+          (str/replace #"(gru |gruodžio )" "gruodžio ")))
+    (fn [text]
+      (-> text
+          (str/replace #"sau " "sausio ")
+          (str/replace #"(^vas |vasario )" "vasaris ")
+          (str/replace #"(kov |kovo )" "kovas ")
+          (str/replace #"(bal |balandžio )" "balandis ")
+          (str/replace #"(geg |gegužės )" "gegužė ")
+          (str/replace #"(bir |birželio )" "birželis ")
+          (str/replace #"(lie |liepos )" "liepa ")
+          (str/replace #"(rgp |rugpjūčio )" "rugpjūtis ")
+          (str/replace #"(rgs |rugsėjo )" "rugsėjis ")
+          (str/replace #"(spa |spalio )" "spalis ")
+          (str/replace #"(lap |lapkričio )" "lapkritis ")
+          (str/replace #"(gru |gruodžio )" "gruodis ")))))
+
+(defn normalize [text]
+  (-> text
+      (str/lower-case)
+      (normalize-lt)
+
+      (str/replace #"(.*\d+)(h)(\d{2})" "$1:$3")
+      (str/replace #"([Ll]e\s)(\d+.*)" "$2")
+      (str/replace #"(.*\d{2,})(\sà\s)(\d+.*)" "$1 $3")
+      (str/replace #"(.*\d+\s[a-zA-Z]+)(\sà\s)(\d+.*)" "$1 $3")
+
+      (str/replace "pst" "PST")
+      (str/replace "edt" "EDT")
+      (str/replace "bst" "GMT")
+      (str/replace " gmt" " GMT")
+      (str/replace "p.m." "pm")
+      (str/replace "utc" "UTC")
+      (str/replace "est" "EST")
+      (str/replace "mar." "marzo")
+      (str/replace " mar " " marzo ")
+
+      (str/replace "январь" "января")
+      (str/replace "февраль" "февраля")
+      (str/replace "март " "марта ")
+      (str/replace "апрель" "апреля")
+      (str/replace "май" "мая")
+      (str/replace "июнь" "июня")
+      (str/replace "июль" "июля")
+      (str/replace "август " "августа ")
+      (str/replace "сентябрь" "сентября")
+      (str/replace "октябрь" "октября")
+      (str/replace "ноябрь" "ноября")
+      (str/replace "декабрь" "декабря")))
+
+(defn special-cases [text locale document-time]
+  (let [document-time (or document-time (DateTime.))
+        fmts [(fmt "hh:mm a z")
+              (fmt "hh:mm a")
+              (fmt "hh:mma z")
+              (fmt "hh:mma")
+              (fmt "HH:mm z")
+              (fmt "HH:mm")]]
+    (first
+      (for [^DateTimeFormatter formatter fmts
+            :let [parsed (try
+                           (.toDate (-> (.parseLocalDateTime formatter text)
+                                        (.withYear (.getYear document-time))
+                                        (.withMonthOfYear (.getMonthOfYear document-time))
+                                        (.withDayOfMonth (.getDayOfMonth document-time)))
+                                    (TimeZone/getTimeZone "GMT"))
+                           (catch Exception _ nil))]
+            :when parsed] parsed))))
+
+(def used-locales (atom {}))
+
+(defn formatters [locale]
+  (if-let [used-formatters (get @used-locales locale)]
+    used-formatters
+    (let [locale-formatters (common-formatters locale)]
+      (swap! used-locales assoc locale locale-formatters)
+      locale-formatters)))
+
+(defn parse
+  ([^String text]
+   (parse text Locale/ENGLISH nil))
+  ([^String text ^Locale locale]
+   (parse text locale nil))
+  ([^String text ^Locale locale ^DateTime document-time]
+   (let [text (normalize text)
+         locale-formatters (formatters locale)
+         parsed-dates (for [^DateTimeFormatter formatter locale-formatters
+                            :let [parsed (try
+                                           (let [^LocalDateTime pdate (.parseLocalDateTime formatter text)]
+                                             (when (< 10000 (.getYear pdate))
+                                               (throw (Exception.)))
+                                             (.toDate (if (and (not (nil? document-time))
+                                                               (not= (.getYear document-time) (.getYear (DateTime.))))
+                                                        (.minusYears pdate (- (.getYear pdate) (.getYear document-time)))
+                                                        pdate)
+                                                      (TimeZone/getTimeZone "GMT")))
+                                           (catch Exception _ nil))]
+                            :when parsed] parsed)]
+     (if (empty? parsed-dates)
+       (conj parsed-dates (special-cases text locale document-time))
+       parsed-dates))))
