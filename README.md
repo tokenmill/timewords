@@ -15,7 +15,7 @@ The library is designed to support multiple languages. Currently two languages a
 Add a dependency to your `project.clj`:
 
 ```clojure
-[lt.tokenmill/timewords "0.4.0"]
+[lt.tokenmill/timewords "0.5.0"]
 ```
 
 ```clojure
