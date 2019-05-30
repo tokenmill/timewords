@@ -2,10 +2,53 @@ stages:
   - test
   - deploy
 
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_HOST: tcp://docker:2375/
+
 run-unit-tests:
   stage: test
   image: clojure:alpine
   when: always
   script:
     - lein do clean, test
-    
+
+run-jdk7-tests:
+  stage: test
+  image: docker:stable
+  when: manual
+  services:
+    - docker:dind
+  script:
+    - docker build -f Dockerfile.jdk7.test -t timewords:jdk7 .
+    - docker run timewords:jdk7
+
+run-jdk8-tests:
+  stage: test
+  image: docker:stable
+  when: always
+  services:
+    - docker:dind
+  script:
+    - docker build -f Dockerfile.jdk8.test -t timewords:jdk8 .
+    - docker run timewords:jdk8
+
+run-jdk10-tests:
+  stage: test
+  image: docker:stable
+  when: always
+  services:
+    - docker:dind
+  script:
+    - docker build -f Dockerfile.jdk10.test -t timewords:jdk10 .
+    - docker run timewords:jdk10
+
+run-jdk11-tests:
+  stage: test
+  image: docker:stable
+  when: always
+  services:
+    - docker:dind
+  script:
+    - docker build -f Dockerfile.jdk11.test -t timewords:jdk11 .
+    - docker run timewords:jdk11

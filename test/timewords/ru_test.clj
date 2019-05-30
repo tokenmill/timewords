@@ -7,15 +7,15 @@
 
 (defn date [& xs] (.toDate (apply date-time xs)))
 
-(deftest es-dates-test
-  (testing "spanish month names"
+(deftest ru-dates-test
+  (testing "russian month names"
     (is (= (date 2018 4 7 19 19) (parse "7 April 2018, 19:19" nil "en")))
     (is (= (date 2018 4 7 19 19) (parse "7 апреля 2018, 19:19" nil "ru")))
     (is (= (date 2018 4 7 22 46) (parse "22:46, 7 апреля 2018" nil "ru")))
-    (is (= (date 2018 4 6 16 20) (parse "6 апреля 16:20" nil "ru")))
-    (is (= (date 2018 3 28 16 32) (parse "28 марта 16:32" nil "ru")))
+    (is (= (date 2018 4 6 16 20) (parse "6 апреля 16:20" (.toDate (joda/date-time 2018)) "ru")))
+    (is (= (date 2018 3 28 16 32) (parse "28 марта 16:32" (.toDate (joda/date-time 2018)) "ru")))
     (is (= (date 2018 4 7 20 55) (parse "7 апреля 2018 20:55" nil "ru")))
-    (is (= (date 2018 4 7 22 22) (parse "7 апреля, 22:22" nil "ru")))
+    (is (= (date 2018 4 7 22 22) (parse "7 апреля, 22:22" (.toDate (joda/date-time 2018)) "ru")))
     (is (= (date 2018 4 7 21 55) (parse "07.04.2018, 21:55" nil "ru")))
     (is (= (date 2018 3 1 22 06) (parse "01.03.2018 в 22:06" nil "ru")))
     (is (= (date 2018 4 8 0 01) (parse "08.04.2018 00:01" nil "ru")))
