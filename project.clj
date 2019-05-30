@@ -6,4 +6,4 @@
   :aot [timewords.core]
 
   :profiles {:dev {:dependencies  []}
-             :provided {:dependencies [[org.clojure/clojure "1.5.1"]]}})
+             :provided {:dependencies [[org.clojure/clojure "1.8.0"]]}})
