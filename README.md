@@ -2,9 +2,14 @@
 
 [![Clojars Project](https://img.shields.io/clojars/v/lt.tokenmill/timewords.svg)](https://clojars.org/lt.tokenmill/timewords)
 
-Library to parse a date string to java.util.Date object. When the library cannot parse the input string it returns *`nil`*.
+Library to parse a date string to java.util.Date object. For example:
 
-More formally, from for types of temporal expressions: *time*, *duration*, *interval*, and *set*; only one type is of interest: *time*. Also, *time* type can be divided into two subtypes: fuzzy (e.g. last Sunday) and absolute (1st of January, 2017). To parse a fuzzy time string a *document time* (i.e. a `java.util.Date object`) is required. By default, document time is ``now``. 
+* "2 weeks from now" -> 2018-11-29T09:52:23.000-00:00
+* "28th February 2019" -> 2019-02-28T00:00:00.000-00:00
+
+When the library cannot parse the input string it returns *`nil`*.
+
+More formally, from four types of temporal expressions: *time*, *duration*, *interval*, and *set*; only one type is of interest: *time*. Also, *time* type can be divided into two subtypes: fuzzy (e.g. last Sunday) and absolute (1st of January, 2019). To parse a fuzzy time string a *reference time* (i.e. a `java.util.Date object`) is required. By default, reference time is ``now``. 
 
 The library is designed to support multiple languages. Currently two languages are supported: English and Lithuanian. Default language is English.
 
@@ -12,11 +17,9 @@ The library is designed to support multiple languages. Currently two languages a
  
 ## Clojure
 
-Add a dependency to your `project.clj`:
-
-```clojure
-[lt.tokenmill/timewords "0.5.0"]
-```
+Add a dependency to your
+* *project.clj* - `[lt.tokenmill/timewords "0.5.0"]`
+* *deps.edn* - `lt.tokenmill/timewords {:mvn/version "0.5.0"}`
 
 ```clojure
 (require '[timewords.core :refer [parse]])
@@ -85,7 +88,7 @@ Note that `timewords` depends on `org.clojure/clojure` which must be provided.
 
 # Notes
 
-Relative dates that can be understood as a time period, e.g. `last December` are rounded to the beginning of the period, e.g. 'last December' translates to `2016-12-01T00:00:00Z`.
+Relative dates that can be understood as a time period, e.g. `last December` are rounded to the beginning of the period, e.g. `last December` translates to `2016-12-01T00:00:00Z`.
 
 Timewords of the form `in monthname` is interpreted as if it refers to the past, i.e. `in December` means `last December`.
 
@@ -96,8 +99,3 @@ Timeword which is only a name of a weekday, e.g. `Monday`, is interpreted as if 
 Timeword of the form `next weekday` means the first day in the future which which weekday is the one mentioned, e.g. `next Monday` means the first Monday to come. If today is Monday and we are parsing `next Monday` then it means a date after 7 days. 
 
 Timeword of a form `this weekday`, e.g. `this Monday`, is interpreted as if it refers to the future, i.e. `this Monday` means the same as `next Monday`.
-
-# TODO
-
-TODO: 
-- [ ] relative Lithuanian dates.
