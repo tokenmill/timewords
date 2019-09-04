@@ -1,3 +1,7 @@
+<a href="http://www.tokenmill.lt">
+      <img src=".github/tokenmill-logo.svg" width="125" height="125" align="right" />
+</a>
+
 # timewords
 
 [![Clojars Project](https://img.shields.io/clojars/v/lt.tokenmill/timewords.svg)](https://clojars.org/lt.tokenmill/timewords)
@@ -101,3 +105,9 @@ Timeword of a form `this weekday`, e.g. `this Monday`, is interpreted as if it r
 
 TODO: 
 - [ ] relative Lithuanian dates.
+
+## License
+
+Copyright &copy; 2019 [TokenMill UAB](http://www.tokenmill.lt).
+
+Distributed under the The Apache License, Version 2.0.
